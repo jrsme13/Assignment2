@@ -1,0 +1,24 @@
+﻿Build started 13/02/2013 18:26:31.
+     1>Project "C:\Users\James\Documents\GitHub\Assignment2\Assignment2\Assignment2\Assignment2.vcxproj" on node 2 (build target(s)).
+     1>PrepareForBuild:
+         Creating directory "C:\Users\James\Documents\GitHub\Assignment2\Assignment2\Debug\".
+       InitializeBuildStatus:
+         Creating "Debug\Assignment2.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt baseSetup.cpp graphics.cpp main.cpp userInput.cpp
+         userInput.cpp
+         main.cpp
+     1>c:\users\james\documents\github\assignment2\assignment2\assignment2\basesetup.h(38): error C2143: syntax error : missing ';' before '*'
+     1>c:\users\james\documents\github\assignment2\assignment2\assignment2\basesetup.h(38): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>c:\users\james\documents\github\assignment2\assignment2\assignment2\basesetup.h(38): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+         graphics.cpp
+         baseSetup.cpp
+     1>c:\users\james\documents\github\assignment2\assignment2\assignment2\basesetup.h(38): error C2143: syntax error : missing ';' before '*'
+     1>c:\users\james\documents\github\assignment2\assignment2\assignment2\basesetup.h(38): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+     1>c:\users\james\documents\github\assignment2\assignment2\assignment2\basesetup.h(38): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
+         Generating Code...
+     1>Done Building Project "C:\Users\James\Documents\GitHub\Assignment2\Assignment2\Assignment2\Assignment2.vcxproj" (build target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:01.14
