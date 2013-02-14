@@ -30,12 +30,12 @@ private:
 	void InitializeWindows(int&, int&);
 	void ShutDownWindows();
 
-	LPCWSTR m_applicationName;
-	HINSTANCE m_hinstance;
-	HWND m_hwnd;
+	LPCWSTR _applicationName;
+	HINSTANCE _hinstance;
+	HWND _hwnd;
 
 	userInput* _userInput;
-	grahpics* _graphics;
+	graphics* _graphics;
 
 
 
