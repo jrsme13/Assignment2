@@ -53,3 +53,85 @@ bool baseSetup::Intialize()
 
 
 }
+
+void baseSetup::Shutdown()
+{
+	if(_graphics)
+	{
+		//_graphics->shutdown();
+		delete _graphics;
+		_graphics = 0;
+	}
+
+	if(_userInput)
+	{
+		delete _userInput;
+		_userInput = 0;
+	}
+
+	ShutDownWindows();
+
+	return;
+}
+
+void baseSetup::Run()
+{
+	MSG msg;
+	bool done = false;
+	bool result;
+
+	ZeroMemory(&msg, sizeof(MSG));
+
+	
+	while(!done)
+	{
+		if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+
+		
+		if(msg.message == WM_QUIT)
+		{
+			done = true;
+		}
+		else
+		{
+			
+			result = Frame();
+			if(!result)
+			{
+				done = true;
+			}
+		}
+
+
+	}
+
+	return;
+}
+
+
+bool baseSetup::Frame()
+{
+	bool check;
+
+	if(_userInput->PressDownKey(VK_ESCAPE))
+	{
+		MessageBox(_hwnd,NULL,L"Escape failed",MB_OK);
+		return false;
+	}
+
+	check = _graphics->Frame();
+
+	if(!check)
+	{
+		MessageBox(_hwnd,NULL,L"graphics frame processing failed",MB_OK);
+		return false;
+	}
+
+	return true;
+
+}
+
