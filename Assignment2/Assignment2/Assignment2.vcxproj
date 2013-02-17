@@ -75,12 +75,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="baseSetup.cpp" />
+    <ClCompile Include="Direct3D.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="userInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="baseSetup.h" />
+    <ClInclude Include="Direct3D.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="userInput.h" />
   </ItemGroup>

@@ -3,7 +3,7 @@
 #ifndef _GRAPHICS_H_
 #define _GRAPHICS_H_
 
-#include <Windows.h>
+#include "Direct3D.h"
 
 
 //global
@@ -21,13 +21,14 @@ public:
 	~graphics();
 
 
-	bool Intialize(int width,int height, HWND);
+	bool Intialize(int width,int height,HWND);
 	void Shutdown();
 	bool Frame();
 
 private:
 
 	bool Render();
+	Direct3D* _D3D;
 };
 
 
