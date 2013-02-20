@@ -75,16 +75,25 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="baseSetup.cpp" />
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="Direct3D.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model.cpp" />
+    <ClCompile Include="shader.cpp" />
     <ClCompile Include="userInput.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="baseSetup.h" />
+    <ClInclude Include="camera.h" />
     <ClInclude Include="Direct3D.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="Model.h" />
+    <ClInclude Include="shader.h" />
     <ClInclude Include="userInput.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shader.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
