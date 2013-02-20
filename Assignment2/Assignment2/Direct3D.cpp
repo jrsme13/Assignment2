@@ -68,11 +68,11 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
 
 	if(fullscreen)
 	{
-		swapChainDesc.Windowed = FALSE;
+		swapChainDesc.Windowed = false;
 	}
 	else
 	{
-		swapChainDesc.Windowed = TRUE;
+		swapChainDesc.Windowed = true;
 	}
 
 	swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
@@ -93,6 +93,7 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
 	result = _swapChain->GetBuffer(0, __uuidof(ID3D10Texture2D), (LPVOID*)&backBufferPtr);
 	if(FAILED(result))
 	{
+		MessageBox(hwnd,L"Getbuffer",L"Error",MB_OK);
 		return false;
 	}
 
@@ -100,6 +101,7 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
 	result = _device->CreateRenderTargetView(backBufferPtr, NULL, &_renderTargetView);
 	if(FAILED(result))
 	{
+		MessageBox(hwnd,L"create traget view",L"Error",MB_OK);
 		return false;
 	}
 
@@ -116,7 +118,7 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
     descDepth.Height = screenHeight;
     descDepth.MipLevels = 1;
     descDepth.ArraySize = 1;
-    descDepth.Format = DXGI_FORMAT_D32_FLOAT;
+    descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     descDepth.SampleDesc.Count = 1;
     descDepth.SampleDesc.Quality = 0;
     descDepth.Usage = D3D10_USAGE_DEFAULT;
@@ -127,6 +129,7 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
 	result = _device->CreateTexture2D(&descDepth, NULL, &_depthStencilBuffer);
 	if(FAILED(result))
 	{
+		MessageBox(hwnd,L"create texture 2d",L"Error",MB_OK);
 		return false;
 	}
 
@@ -160,6 +163,7 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
 	result = _device->CreateDepthStencilState(&depthStencilDesc, &_depthStencilState);
 	if(FAILED(result))
 	{
+		MessageBox(hwnd,L"create depth stencil state",L"Error",MB_OK);
 		return false;
 	}
 
@@ -177,6 +181,7 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
 	result = _device->CreateDepthStencilView(_depthStencilBuffer, &depthStencilViewDesc, &_depthStencilView);
 	if(FAILED(result))
 	{
+		MessageBox(hwnd,L"create depth stencil view",L"Error",MB_OK);
 		return false;
 	}
 
@@ -203,6 +208,7 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
 	result = _device->CreateRasterizerState(&rasterDesc, &_rasterState);
 	if(FAILED(result))
 	{
+		MessageBox(hwnd,L"create rasterizer",L"Error",MB_OK);
 		return false;
 	}
 

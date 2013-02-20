@@ -66,7 +66,7 @@ bool graphics::Frame()
 bool graphics::Render()
 {
 	// Clear the buffers to begin the scene.
-	_D3D->SetupScene(0.5f, 0.5f, 0.5f, 1.0f);
+	_D3D->SetupScene(255.f,0.f, 0.f, 1.0f);
 
 
 	// Present the rendered scene to the screen.

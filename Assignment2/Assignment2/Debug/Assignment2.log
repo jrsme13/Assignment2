@@ -1,4 +1,4 @@
-﻿Build started 20/02/2013 18:50:39.
+﻿Build started 20/02/2013 20:23:46.
      1>Project "C:\Users\James\Documents\GitHub\Assignment2\Assignment2\Assignment2\Assignment2.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Debug\Assignment2.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -32,4 +32,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.75
+Time Elapsed 00:00:01.61
