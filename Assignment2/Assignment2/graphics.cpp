@@ -28,7 +28,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the Direct3D object.
-	result = _D3D->Initialize(width, height, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
+	result = _D3D->intialize(width, height, VSYNC_ENABLED, hwnd, FULL_SCREEN, SCREEN_DEPTH, SCREEN_NEAR);
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize Direct3D", L"Error", MB_OK);
@@ -66,11 +66,11 @@ bool graphics::Frame()
 bool graphics::Render()
 {
 	// Clear the buffers to begin the scene.
-	m_D3D->BeginScene(0.5f, 0.5f, 0.5f, 1.0f);
+	_D3D->SetupScene(0.5f, 0.5f, 0.5f, 1.0f);
 
 
 	// Present the rendered scene to the screen.
-	m_D3D->EndScene();
+	_D3D->DrawScene();
 
 	return true;
 }

@@ -18,8 +18,35 @@ class Direct3D
 {
 public:
 	Direct3D();
-	Direct3D();
+	Direct3D(const Direct3D&);
 	~Direct3D();
+
+	bool intialize(int, int,bool,HWND,bool,float,float);
+	void Shutdown();
+
+	void SetupScene(float,float,float,float);
+	void DrawScene();
+
+	ID3D10Device* GetDevice();
+
+	void GetProjectionMatrix(D3DXMATRIX&);
+	void GetWorldMatrix(D3DXMATRIX&);
+	void GetOrthoMatrix(D3DXMATRIX&);
+
+private:
+
+	bool _vsync_enabled;
+	IDXGISwapChain* _swapChain;
+	ID3D10Device* _device;
+	ID3D10RenderTargetView* _renderTargetView;
+	ID3D10Texture2D* _depthStencilBuffer;
+	ID3D10DepthStencilState* _depthStencilState;
+	ID3D10DepthStencilView* _depthStencilView;
+	ID3D10RasterizerState* _rasterState;
+	D3DXMATRIX _projectionMatrix;
+	D3DXMATRIX _worldMatrix;
+	D3DXMATRIX _orthoMatrix;
+
 };
 
 #endif
