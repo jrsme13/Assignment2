@@ -4,6 +4,9 @@
 #define _GRAPHICS_H_
 
 #include "Direct3D.h"
+#include "camera.h"
+#include "Model.h"
+#include "shader.h"
 
 
 //global
@@ -29,6 +32,9 @@ private:
 
 	bool Render();
 	Direct3D* _D3D;
+	camera* _camera;
+	Model* _model;
+	shader* _shader;
 };
 
 

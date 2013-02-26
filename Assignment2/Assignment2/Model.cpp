@@ -104,7 +104,7 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 
 	// Set up the description of the vertex buffer.
 	vertexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexType) * m_vertexCount;
+	vertexBufferDesc.ByteWidth = sizeof(Vertex) * _vertexCount;
 	vertexBufferDesc.BindFlags = D3D10_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
@@ -113,7 +113,7 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 	vertexData.pSysMem = vertices;
 
 	// Now finally create the vertex buffer.
-	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &_vertexBuffer);
 	if(FAILED(result))
 	{
 		return false;
@@ -121,7 +121,7 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 
 	// Set up the description of the index buffer.
 	indexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned long) * m_indexCount;
+	indexBufferDesc.ByteWidth = sizeof(unsigned long) * _indexCount;
 	indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -130,7 +130,7 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 	indexData.pSysMem = indices;
 
 	// Create the index buffer.
-	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+	result = device->CreateBuffer(&indexBufferDesc, &indexData, &_indexBuffer);
 	if(FAILED(result))
 	{
 		return false;
