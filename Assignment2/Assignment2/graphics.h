@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "Model.h"
 #include "shader.h"
+#include "Lights.h"
 
 
 //global
@@ -36,8 +37,9 @@ private:
 	Model* _model;
 	shader* _shader;
 	Texture* _texture;
+	Lights* _light;
 
-	bool Render();
+	bool Render(float);
 };
 
 

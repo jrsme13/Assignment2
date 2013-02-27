@@ -8,6 +8,7 @@ graphics::graphics()
 	_model = 0;
 	_shader = 0;
 	_texture = 0;
+	_light = 0;
 }
 
 graphics::graphics(const graphics& other)
@@ -79,12 +80,30 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 		return false;
 	}
 
+	// Create the light object.
+	_light = new Lights;
+	if(!_light)
+	{
+		return false;
+	}
+
+	// Initialize the light object.
+	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_light->SetDirection(0.0f, 0.0f, 1.0f);
 
 	return true;
 }
 
 void graphics::Shutdown()
 {
+
+
+	// Release the light object.
+	if(_light)
+	{
+		delete _light;
+		_light = 0;
+	}
 
 	// Release the texture shader object.
 	if(_texture)
@@ -134,7 +153,18 @@ bool graphics::Frame()
 
 
 	// Render the graphics scene.
-	result = Render();
+	static float rotation = 0.0f;
+
+
+	// Update the rotation variable each frame.
+	//rotation += (float)D3DX_PI * 0.01f;
+	//if(rotation > 360.0f)
+	//{
+		rotation = -45.f;
+	//}
+
+	// Render the graphics scene.
+	result = Render(rotation);
 	if(!result)
 	{
 		return false;
@@ -143,7 +173,7 @@ bool graphics::Frame()
 	return true;
 }
 
-bool graphics::Render()
+bool graphics::Render(float rotation)
 {
 	// Clear the buffers to begin the scene.
 	_D3D->SetupScene(255.f,0.f, 0.f, 1.0f);
@@ -162,11 +192,15 @@ bool graphics::Render()
 	_D3D->GetWorldMatrix(worldMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
+
+	D3DXMatrixRotationY(&worldMatrix, rotation);
+
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_model->RenderToGraphics(_D3D->GetDevice());
 
 	// Render the model using the color shader.
-	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture());
+	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture(),
+		_light->GetDirection(), _light->GetDiffuseColor());
 
 	// Present the rendered scene to the screen.
 	_D3D->DrawScene();

@@ -78,6 +78,7 @@
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="Direct3D.cpp" />
     <ClCompile Include="graphics.cpp" />
+    <ClCompile Include="Lights.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="shader.cpp" />
@@ -89,6 +90,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="Direct3D.h" />
     <ClInclude Include="graphics.h" />
+    <ClInclude Include="Lights.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="Texture.h" />

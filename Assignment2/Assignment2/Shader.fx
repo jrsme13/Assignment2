@@ -7,6 +7,8 @@ matrix viewMatrix;
 matrix projectionMatrix;
 Texture2D shaderTexture;
 
+float4 diffuseColor;
+float3 lightDirection;
 
 // Texture Sample state
 
@@ -23,12 +25,14 @@ struct VertexInputType
 {
     float4 position : POSITION;
     float2 tex : TEXCOORD0;
+	float3 normal: NORMAL;
 };
 
 struct PixelInputType
 {
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
+	float3 normal: NORMAL;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,6 +54,12 @@ PixelInputType ColorVertexShader(VertexInputType input)
     // Store the input color for the pixel shader to use.
     output.tex = input.tex;
     
+	// Calculate the normal vector against the world matrix only.
+    output.normal = mul(input.normal, (float3x3)worldMatrix);
+	
+    // Normalize the normal vector.
+    output.normal = normalize(output.normal);
+
     return output;
 }
 
@@ -59,10 +69,28 @@ PixelInputType ColorVertexShader(VertexInputType input)
 float4 ColorPixelShader(PixelInputType input) : SV_Target
 {
     float4 textureColor;
-
+	float3 lightDir;
+    float lightIntensity;
+    float4 color;
 
     // Sample the pixel color from the texture using the sampler at this texture coordinate location.
     textureColor = shaderTexture.Sample(SampleType, input.tex);
+
+	    // Invert the light direction for calculations.
+    lightDir = -lightDirection;
+
+    // Calculate the amount of light on this pixel.
+    lightIntensity = saturate(dot(input.normal, lightDir));
+
+
+
+    // Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
+    color = saturate(diffuseColor * lightIntensity);
+
+    // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
+    color = color * textureColor;
+
+    return color;
 
     return textureColor;
 }
