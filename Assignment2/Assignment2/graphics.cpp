@@ -7,6 +7,7 @@ graphics::graphics()
 	_camera = 0;
 	_model = 0;
 	_shader = 0;
+	_texture = 0;
 }
 
 graphics::graphics(const graphics& other)
@@ -56,7 +57,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = _model->Initialize(_D3D->GetDevice());
+	result = _model->Initialize(_D3D->GetDevice(),L"../Assignment2/seafloor.dds");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -84,6 +85,15 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 
 void graphics::Shutdown()
 {
+
+	// Release the texture shader object.
+	if(_texture)
+	{
+		_texture->Shutdown();
+		delete _texture;
+		_texture = 0;
+	}
+
 
 	// Release the color shader object.
 	if(_shader)
@@ -156,7 +166,7 @@ bool graphics::Render()
 	_model->RenderToGraphics(_D3D->GetDevice());
 
 	// Render the model using the color shader.
-	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture());
 
 	// Present the rendered scene to the screen.
 	_D3D->DrawScene();

@@ -5,20 +5,30 @@
 matrix worldMatrix;
 matrix viewMatrix;
 matrix projectionMatrix;
+Texture2D shaderTexture;
 
+
+// Texture Sample state
+
+SamplerState SampleType
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = Wrap;
+    AddressV = Wrap;
+};
 
 // TYPEDEFS //
 
 struct VertexInputType
 {
     float4 position : POSITION;
-    float4 color : COLOR;
+    float2 tex : TEXCOORD0;
 };
 
 struct PixelInputType
 {
     float4 position : SV_POSITION;
-    float4 color : COLOR;
+    float2 tex : TEXCOORD0;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +48,7 @@ PixelInputType ColorVertexShader(VertexInputType input)
     output.position = mul(output.position, projectionMatrix);
     
     // Store the input color for the pixel shader to use.
-    output.color = input.color;
+    output.tex = input.tex;
     
     return output;
 }
@@ -48,7 +58,13 @@ PixelInputType ColorVertexShader(VertexInputType input)
 ////////////////////////////////////////////////////////////////////////////////
 float4 ColorPixelShader(PixelInputType input) : SV_Target
 {
-    return input.color;
+    float4 textureColor;
+
+
+    // Sample the pixel color from the texture using the sampler at this texture coordinate location.
+    textureColor = shaderTexture.Sample(SampleType, input.tex);
+
+    return textureColor;
 }
 
 

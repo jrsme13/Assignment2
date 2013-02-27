@@ -11,7 +11,7 @@
 
 //global
 
-const bool FULL_SCREEN = true;
+const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
@@ -30,11 +30,14 @@ public:
 
 private:
 
-	bool Render();
+	
 	Direct3D* _D3D;
 	camera* _camera;
 	Model* _model;
 	shader* _shader;
+	Texture* _texture;
+
+	bool Render();
 };
 
 

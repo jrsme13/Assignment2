@@ -7,6 +7,7 @@ Model::Model()
 
 	_vertexBuffer = 0;
 	_indexBuffer = 0;
+	_texture = 0;
 }
 
 Model::Model(const Model& other)
@@ -21,7 +22,7 @@ Model::~Model()
 }
 
 
-bool Model::Initialize(ID3D10Device* device)
+bool Model::Initialize(ID3D10Device* device,WCHAR* textureFile)
 {
 	bool result;
 
@@ -34,13 +35,20 @@ bool Model::Initialize(ID3D10Device* device)
 		return false;
 	}
 
+	// Load the texture for this model.
+	result = LoadTexture(device, textureFile);
+	if(!result)
+	{
+		return false;
+	}
+
 	return true;
 }
 
 
 void Model::Shutdown()
 {
-	
+	ReleaseTexture();	
 	ShutdownBuffers();
 
 	return;
@@ -59,6 +67,11 @@ int Model::GetIndexCount()
 	return _indexCount;
 }
 
+
+ID3D10ShaderResourceView* Model::GetTexture()
+{
+	return _texture->GetTexture();
+}
 
 bool Model::InitializeBuffers(ID3D10Device* device)
 {
@@ -89,13 +102,14 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 
 	// Load the vertex array with data.
 	vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[0].texture = D3DXVECTOR2(0.0f, 1.0f);
 
 	vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);  // Top middle.
-	vertices[1].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[1].texture = D3DXVECTOR2(0.5f, 0.0f);
 
 	vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertices[2].color = D3DXVECTOR4(0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[2].texture = D3DXVECTOR2(1.0f, 1.0f);
+
 
 	// Load the index array with data.
 	indices[0] = 0;  // Bottom left.
@@ -185,6 +199,42 @@ void Model::RenderBuffers(ID3D10Device* device)
 
 	// Set the type of primitive that should be rendered from this vertex buffer, in this case triangles.
 	device->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	return;
+}
+
+bool Model::LoadTexture(ID3D10Device* device, WCHAR* filename)
+{
+	bool result;
+
+
+	// Create the texture object.
+	_texture = new Texture;
+	if(!_texture)
+	{
+		return false;
+	}
+
+	// Initialize the texture object.
+	result = _texture->Initialize(device, filename);
+	if(!result)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+void Model::ReleaseTexture()
+{
+	// Release the texture object.
+	if(_texture)
+	{
+		_texture->Shutdown();
+		delete _texture;
+		_texture = 0;
+	}
 
 	return;
 }
