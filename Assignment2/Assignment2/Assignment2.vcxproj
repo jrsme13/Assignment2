@@ -81,6 +81,7 @@
     <ClCompile Include="Lights.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ObjectLoader.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="userInput.cpp" />
@@ -92,6 +93,7 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ObjectLoader.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="userInput.h" />

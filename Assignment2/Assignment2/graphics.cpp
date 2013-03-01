@@ -88,7 +88,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the light object.
-	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_light->SetDiffuseColor(0.0f, 0.0f, 128.0f, 1.0f);
 	_light->SetDirection(0.0f, 0.0f, 1.0f);
 
 	return true;
