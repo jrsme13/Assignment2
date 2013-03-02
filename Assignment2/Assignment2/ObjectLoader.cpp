@@ -108,3 +108,187 @@ void ObjectLoader::Initialize(char* file)
 
 	ifs.close();
 }
+
+
+float ObjectLoader::GetFaceVertexX(int face,int faceindex)
+{
+	int vertexIndex;
+	
+	if(faceindex == 0)
+	{
+		vertexIndex = _facesArray[face].vertexIndex1;
+	}
+
+	if(faceindex == 1)
+	{
+		vertexIndex = _facesArray[face].vertexIndex2;
+	}
+
+	if(faceindex == 2)
+	{
+		vertexIndex = _facesArray[face].vertexIndex3;
+	}
+
+	return _verteciesArray[vertexIndex].x;
+}
+
+float ObjectLoader::GetFaceVertexY(int face,int faceindex)
+{
+	int vertexIndex;
+	
+	if(faceindex == 0)
+	{
+		vertexIndex = _facesArray[face].vertexIndex1;
+	}
+
+	if(faceindex == 1)
+	{
+		vertexIndex = _facesArray[face].vertexIndex2;
+	}
+
+	if(faceindex == 2)
+	{
+		vertexIndex = _facesArray[face].vertexIndex3;
+	}
+
+	return _verteciesArray[vertexIndex].y;
+}
+
+float ObjectLoader::GetFaceVertexZ(int face,int faceindex)
+{
+	int vertexIndex;
+	
+	if(faceindex == 0)
+	{
+		vertexIndex = _facesArray[face].vertexIndex1;
+	}
+
+	if(faceindex == 1)
+	{
+		vertexIndex = _facesArray[face].vertexIndex2;
+	}
+
+	if(faceindex == 2)
+	{
+		vertexIndex = _facesArray[face].vertexIndex3;
+	}
+
+	return _verteciesArray[vertexIndex].z;
+}
+
+
+float ObjectLoader::GetFaceTextureTu(int face, int faceIndex)
+{
+	int textureIndex;
+	
+	if(faceIndex == 0)
+	{
+		textureIndex = _facesArray[face].textureIndex1;
+	}
+
+	if(faceIndex == 1)
+	{
+		textureIndex = _facesArray[face].textureIndex2;
+	}
+
+	if(faceIndex == 2)
+	{
+		textureIndex = _facesArray[face].textureIndex3;
+	}
+
+	return _texturesArray[textureIndex].tu;
+
+}
+
+float ObjectLoader::GetFaceTextureTV(int face, int faceIndex)
+{
+	int textureIndex;
+	
+	if(faceIndex == 0)
+	{
+		textureIndex = _facesArray[face].textureIndex1;
+	}
+
+	if(faceIndex == 1)
+	{
+		textureIndex = _facesArray[face].textureIndex2;
+	}
+
+	if(faceIndex == 2)
+	{
+		textureIndex = _facesArray[face].textureIndex3;
+	}
+
+	return _texturesArray[textureIndex].tv;
+
+}
+
+
+float ObjectLoader::GetFaceNormalX(int faces, int faceIndex)
+{
+
+	int normalIndex;
+
+	if(faceIndex == 0)
+	{
+		normalIndex = _facesArray[faces].normalIndex1;
+	}
+
+	if(faceIndex == 1)
+	{
+		normalIndex = _facesArray[faces].normalIndex2;
+	}
+
+	if(faceIndex == 2)
+	{
+		normalIndex = _facesArray[faces].normalIndex3;
+	}
+
+	return _normalsArray[normalIndex].x;
+}
+
+float ObjectLoader::GetFaceNormalY(int faces, int faceIndex)
+{
+
+	int normalIndex;
+
+	if(faceIndex == 0)
+	{
+		normalIndex = _facesArray[faces].normalIndex1;
+	}
+
+	if(faceIndex == 1)
+	{
+		normalIndex = _facesArray[faces].normalIndex2;
+	}
+
+	if(faceIndex == 2)
+	{
+		normalIndex = _facesArray[faces].normalIndex3;
+	}
+
+	return _normalsArray[normalIndex].y;
+}
+
+float ObjectLoader::GetFaceNormalZ(int faces, int faceIndex)
+{
+
+	int normalIndex;
+
+	if(faceIndex == 0)
+	{
+		normalIndex = _facesArray[faces].normalIndex1;
+	}
+
+	if(faceIndex == 1)
+	{
+		normalIndex = _facesArray[faces].normalIndex2;
+	}
+
+	if(faceIndex == 2)
+	{
+		normalIndex = _facesArray[faces].normalIndex3;
+	}
+
+	return _normalsArray[normalIndex].z;
+}

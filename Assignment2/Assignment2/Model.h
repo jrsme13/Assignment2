@@ -7,6 +7,8 @@
 #include<d3d10.h>
 #include<D3DX10math.h>
 #include "Texture.h"
+#include "ObjectLoader.h"
+using namespace std;
 
 
 class Model
@@ -16,7 +18,7 @@ public:
 	Model(const Model&);
 	~Model();
 
-	bool Initialize(ID3D10Device*,WCHAR*);
+	bool Initialize(ID3D10Device*, char*, WCHAR*);
 	void Shutdown();
 	void RenderToGraphics(ID3D10Device*);
 
@@ -33,16 +35,29 @@ private:
 		D3DXVECTOR3 normal;
 	};
 
+	struct ModelValues
+	{
+		float x, y, z;
+		float tu, tv;
+		float nx, ny, nz;
+	};
+
+
 	bool InitializeBuffers(ID3D10Device*);
 	void ShutdownBuffers();
 	void RenderBuffers(ID3D10Device*);
 
 	bool LoadTexture(ID3D10Device*, WCHAR*);
 	void ReleaseTexture();
+	bool LoadModel(char*);
+	void ReleaseModel();
+
 
 	ID3D10Buffer *_vertexBuffer, *_indexBuffer;
 	int _vertexCount, _indexCount;
 	Texture* _texture;
+
+	ModelValues* _model;
 
 };
 

@@ -8,6 +8,7 @@ Model::Model()
 	_vertexBuffer = 0;
 	_indexBuffer = 0;
 	_texture = 0;
+	_model = 0;
 }
 
 Model::Model(const Model& other)
@@ -22,10 +23,17 @@ Model::~Model()
 }
 
 
-bool Model::Initialize(ID3D10Device* device,WCHAR* textureFile)
+bool Model::Initialize(ID3D10Device* device,char* modelFile,WCHAR* textureFile)
 {
 	bool result;
 
+
+
+	result = LoadModel(modelFile);
+	if(!result)
+	{
+		return false;
+	}
 
 	
 	result = InitializeBuffers(device);
@@ -50,7 +58,7 @@ void Model::Shutdown()
 {
 	ReleaseTexture();	
 	ShutdownBuffers();
-
+	ReleaseModel();
 	return;
 }
 
@@ -240,4 +248,45 @@ void Model::ReleaseTexture()
 	}
 
 	return;
+}
+
+
+bool Model::LoadModel(char* file)
+{
+	ObjectLoader loader;
+	int faces;
+	int faceCount = 0;
+	int modelCount = 0;
+
+	loader.Initialize(file);
+
+	faces = loader.NumberOfFaces();
+
+	_model = new ModelValues[faces*3];
+	if(!_model)
+	{
+		return false;
+	}
+
+	while( faceCount < faces)
+	{
+		for(int i; i < 3; i++)
+		{
+			_model[modelCount].x = loader.GetFaceVertexX(faceCount,i);
+			_model[modelCount].y = loader.GetFaceVertexY(faceCount,i);
+			_model[modelCount].z = loader.GetFaceVertexZ(faceCount,i);
+
+			_model[modelCount].tu = loader.GetFaceTextureTu(faceCount,i);
+			_model[modelCount].tv = loader.GetFaceTextureTV(faceCount,i);
+
+			_model[modelCount].nx = loader.GetFaceNormalX(faceCount,i);
+			_model[modelCount].ny = loader.GetFaceNormalY(faceCount,i);
+			_model[modelCount].nz = loader.GetFaceNormalZ(faceCount,i);
+
+			modelCount++;
+		}
+
+		faceCount++;
+	}
+
 }
