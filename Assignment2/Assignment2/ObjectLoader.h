@@ -6,6 +6,8 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
+
 using namespace std;
 
 
@@ -38,10 +40,15 @@ private:
 
 	struct Faces
 	{
-		int vertexIndex1, vertexIndex2, vertexIndex3;
-		int textureIndex1, textureIndex2, textureIndex3;
-		int normalIndex1, normalIndex2, normalIndex3;
+		int vertexIndex1, textureIndex1, normalIndex1;
+		int vertexIndex2, textureIndex2, normalIndex2;
+		int vertexIndex3, textureIndex3, normalIndex3;
 	};
+
+	vector<Vertex> _verteciesArray;
+	vector<Textures> _texturesArray;
+	vector<Vertex>	_normalsArray;
+	vector<Faces> _facesArray;
 
 	
 };
