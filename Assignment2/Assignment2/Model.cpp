@@ -89,8 +89,7 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 	D3D10_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 
-	_vertexCount = 3;
-	_indexCount = 3;
+	
 
 
 	// Create the vertex array.
@@ -109,23 +108,15 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 
 
 	// Load the vertex array with data.
-	vertices[0].position = D3DXVECTOR3(-1.0f, -1.0f, 0.0f);  // Bottom left.
-	vertices[0].texture = D3DXVECTOR2(0.0f, 1.0f);
-	vertices[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
+	// Load the vertex array and index array with data.
+	for(int i=0; i<_vertexCount; i++)
+	{
+		vertices[i].position = D3DXVECTOR3(_model[i].x, _model[i].y, _model[i].z);
+		vertices[i].texture = D3DXVECTOR2(_model[i].tu, _model[i].tv);
+		vertices[i].normal = D3DXVECTOR3(_model[i].nx, _model[i].ny, _model[i].nz);
 
-	vertices[1].position = D3DXVECTOR3(0.0f, 1.0f, 0.0f);  // Top middle.
-	vertices[1].texture = D3DXVECTOR2(0.5f, 0.0f);
-	vertices[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-
-	vertices[2].position = D3DXVECTOR3(1.0f, -1.0f, 0.0f);  // Bottom right.
-	vertices[2].texture = D3DXVECTOR2(1.0f, 1.0f);
-	vertices[0].normal = D3DXVECTOR3(0.0f, 0.0f, -1.0f);
-
-
-	// Load the index array with data.
-	indices[0] = 0;  // Bottom left.
-	indices[1] = 1;  // Top middle.
-	indices[2] = 2;  // Bottom right.
+		indices[i] = i;
+	}
 
 	// Set up the description of the vertex buffer.
 	vertexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
@@ -253,7 +244,7 @@ void Model::ReleaseTexture()
 
 bool Model::LoadModel(char* file)
 {
-	ObjectLoader loader;
+	/*ObjectLoader loader;
 	int faces;
 	int faceCount = 0;
 	int modelCount = 0;
@@ -261,6 +252,9 @@ bool Model::LoadModel(char* file)
 	loader.Initialize(file);
 
 	faces = loader.NumberOfFaces();
+
+	_vertexCount = faces*3;
+	_indexCount =  _vertexCount;
 
 	_model = new ModelValues[faces*3];
 	if(!_model)
@@ -270,7 +264,7 @@ bool Model::LoadModel(char* file)
 
 	while( faceCount < faces)
 	{
-		for(int i; i < 3; i++)
+		for(int i = 0; i < 3; i++)
 		{
 			_model[modelCount].x = loader.GetFaceVertexX(faceCount,i);
 			_model[modelCount].y = loader.GetFaceVertexY(faceCount,i);
@@ -289,4 +283,77 @@ bool Model::LoadModel(char* file)
 		faceCount++;
 	}
 
+	return true;*/
+
+	ifstream fin;
+	char input;
+	int i;
+
+
+	// Open the model file.
+	fin.open(file);
+	
+	// If it could not open the file then exit.
+	if(fin.fail())
+	{
+		return false;
+	}
+
+	// Read up to the value of vertex count.
+	fin.get(input);
+	while(input != ':')
+	{
+		fin.get(input);
+	}
+
+	// Read in the vertex count.
+	fin >> _vertexCount;
+
+	// Set the number of indices to be the same as the vertex count.
+	_indexCount = _vertexCount;
+
+	// Create the model using the vertex count that was read in.
+	_model = new ModelValues[_vertexCount];
+	if(!_model)
+	{
+		return false;
+	}
+
+	// Read up to the beginning of the data.
+	fin.get(input);
+	while(input != ':')
+	{
+		fin.get(input);
+	}
+	fin.get(input);
+	fin.get(input);
+
+	// Read in the vertex data.
+	for(i=0; i<_vertexCount; i++)
+	{
+		fin >> _model[i].x >> _model[i].y >> _model[i].z;
+		fin >> _model[i].tu >> _model[i].tv;
+		fin >> _model[i].nx >> _model[i].ny >> _model[i].nz;
+	}
+
+	// Close the model file.
+	fin.close();
+
+	return true;
+}
+
+
+
+
+
+
+void Model::ReleaseModel()
+{
+	if(_model)
+	{
+		delete [] _model;
+		_model = 0;
+	}
+
+	return;
 }

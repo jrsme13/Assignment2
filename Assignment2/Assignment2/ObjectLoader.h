@@ -56,10 +56,12 @@ public:
 private:
 
 
-	vector<Vertex> _verteciesArray;
-	vector<Textures> _texturesArray;
-	vector<Vertex>	_normalsArray;
-	vector<Faces> _facesArray;
+	Vertex* _verteciesArray;
+	Textures* _texturesArray;
+	Vertex*	_normalsArray;
+	Faces* _facesArray;
+
+	int _faceCount;
 
 	
 };

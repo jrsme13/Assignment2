@@ -20,7 +20,6 @@ void ObjectLoader::Initialize(char* file)
 {
 	ifstream ifs;
 	char data;
-	char line[256];
 
 
 	int vertexCount = 0;
@@ -28,14 +27,70 @@ void ObjectLoader::Initialize(char* file)
 	int normalsCount = 0;
 	int faceCount = 0;
 
-
-
 	ifs.open(file);
 
 	if(ifs.fail()== true)
 	{
 		return;
 	}
+
+	ifs.get(data);
+	while(!ifs.eof())
+	{
+		if(data == 'v')
+		{
+			ifs.get(data);
+
+			if(data == ' ')
+			{ 
+				vertexCount++; 
+			}
+			if(data == 't') 
+			{ 
+				textureCount++;
+			}
+			if(data == 'n') 
+			{
+				normalsCount++; 
+			}
+		}
+
+		// If the line starts with 'f' then increment the face count.
+		if(data == 'f')
+		{
+			ifs.get(data);
+			if(data == ' ') 
+			{ 
+				faceCount++;
+			}
+		}
+		
+		// Otherwise read in the remainder of the line.
+		while(data != '\n')
+		{
+			ifs.get(data);
+		}
+
+		// Start reading the beginning of the next line.
+		ifs.get(data);
+	}
+
+	// Close the file.
+	ifs.close();
+
+	_verteciesArray = new Vertex[vertexCount];
+	_texturesArray = new Textures[textureCount];
+	_normalsArray = new Vertex[normalsCount];
+	_facesArray = new Faces[faceCount];
+
+
+
+	ifs.open(file);
+
+	vertexCount = 0;
+	textureCount = 0;
+	normalsCount = 0;
+	faceCount = 0;
 
 	ifs.get(data);
 	while(!ifs.eof())
@@ -48,7 +103,7 @@ void ObjectLoader::Initialize(char* file)
 
 			if(data ==' ')
 			{
-				ifs>>_verteciesArray[vertexCount].x>>_verteciesArray[vertexCount].y>>_verteciesArray[vertexCount].z;
+				ifs >> _verteciesArray[vertexCount].x >> _verteciesArray[vertexCount].y >> _verteciesArray[vertexCount].z;
 
 				_verteciesArray[vertexCount].z = _verteciesArray[vertexCount].z * -1.0f;
 				vertexCount++;
@@ -105,6 +160,8 @@ void ObjectLoader::Initialize(char* file)
 
 
 	}
+
+	_faceCount = faceCount;
 
 	ifs.close();
 }
@@ -291,4 +348,12 @@ float ObjectLoader::GetFaceNormalZ(int faces, int faceIndex)
 	}
 
 	return _normalsArray[normalIndex].z;
+}
+
+
+int ObjectLoader::NumberOfFaces()
+{
+
+	return _faceCount;
+
 }

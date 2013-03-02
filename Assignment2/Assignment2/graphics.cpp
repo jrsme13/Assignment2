@@ -7,7 +7,7 @@ graphics::graphics()
 	_camera = 0;
 	_model = 0;
 	_shader = 0;
-	_texture = 0;
+	//_texture = 0;
 	_light = 0;
 }
 
@@ -58,7 +58,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = _model->Initialize(_D3D->GetDevice(),L"../Assignment2/seafloor.dds");
+	result = _model->Initialize(_D3D->GetDevice(),"../Assignment2/simplecube.obj",L"../Assignment2/seafloor.dds");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -88,7 +88,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the light object.
-	_light->SetDiffuseColor(0.0f, 0.0f, 128.0f, 1.0f);
+	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light->SetDirection(0.0f, 0.0f, 1.0f);
 
 	return true;
@@ -106,12 +106,12 @@ void graphics::Shutdown()
 	}
 
 	// Release the texture shader object.
-	if(_texture)
+	/*if(_texture)
 	{
 		_texture->Shutdown();
 		delete _texture;
 		_texture = 0;
-	}
+	}*/
 
 
 	// Release the color shader object.
@@ -157,11 +157,11 @@ bool graphics::Frame()
 
 
 	// Update the rotation variable each frame.
-	//rotation += (float)D3DX_PI * 0.01f;
-	//if(rotation > 360.0f)
-	//{
-		rotation = -45.f;
-	//}
+	rotation += (float)D3DX_PI * 0.01f;
+	if(rotation > 360.0f)
+	{
+		rotation = -365.0f;
+	}
 
 	// Render the graphics scene.
 	result = Render(rotation);
@@ -176,7 +176,7 @@ bool graphics::Frame()
 bool graphics::Render(float rotation)
 {
 	// Clear the buffers to begin the scene.
-	_D3D->SetupScene(255.f,0.f, 0.f, 1.0f);
+	//_D3D->SetupScene(255.f,0.f, 0.f, 1.0f);
 
 	D3DXMATRIX viewMatrix, projectionMatrix, worldMatrix;
 
