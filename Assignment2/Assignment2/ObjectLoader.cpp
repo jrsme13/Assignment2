@@ -164,6 +164,50 @@ void ObjectLoader::Initialize(char* file)
 	_faceCount = faceCount;
 
 	ifs.close();
+
+	ofstream fout;
+
+
+	int vIndex, tIndex, nIndex;
+	// Open the output file.
+	fout.open("model.txt");
+	
+	// Write out the file header that our model format uses.
+	fout << "Vertex Count: " << (faceCount * 3) << endl;
+	fout << endl;
+	fout << "Data:" << endl;
+	fout << endl;
+
+	// Now loop through all the faces and output the three vertices for each face.
+	for(int i=0; i<faceCount; i++)
+	{
+		vIndex = _facesArray[i].vertexIndex1 - 1;
+		tIndex = _facesArray[i].textureIndex1 - 1;
+		nIndex = _facesArray[i].normalIndex1 - 1;
+
+		fout << _verteciesArray[vIndex].x << ' ' << _verteciesArray[vIndex].y << ' ' << _verteciesArray[vIndex].z << ' '
+			<< _texturesArray[tIndex].tu << ' ' << _texturesArray[tIndex].tv << ' '
+		     << _normalsArray[nIndex].x << ' ' << _normalsArray[nIndex].y << ' ' << _normalsArray[nIndex].z << endl;
+
+		vIndex = _facesArray[i].vertexIndex2 - 1;
+		tIndex = _facesArray[i].textureIndex2 - 1;
+		nIndex = _facesArray[i].normalIndex2 - 1;
+
+		fout << _verteciesArray[vIndex].x << ' ' << _verteciesArray[vIndex].y << ' ' << _verteciesArray[vIndex].z << ' '
+		     << _texturesArray[tIndex].tu << ' ' << _texturesArray[tIndex].tv << ' '
+		     << _normalsArray[nIndex].x << ' ' << _normalsArray[nIndex].y << ' ' << _normalsArray[nIndex].z << endl;
+
+		vIndex = _facesArray[i].vertexIndex3 - 1;
+		tIndex = _facesArray[i].textureIndex3 - 1;
+		nIndex = _facesArray[i].normalIndex3 - 1;
+
+		fout << _verteciesArray[vIndex].x << ' ' << _verteciesArray[vIndex].y << ' ' << _verteciesArray[vIndex].z << ' '
+		     << _texturesArray[tIndex].tu << ' ' << _texturesArray[tIndex].tv << ' '
+		     << _normalsArray[nIndex].x << ' ' << _normalsArray[nIndex].y << ' ' << _normalsArray[nIndex].z << endl;
+	}
+
+	// Close the output file.
+	fout.close();
 }
 
 

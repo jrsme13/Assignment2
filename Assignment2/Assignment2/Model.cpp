@@ -111,9 +111,9 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 	// Load the vertex array and index array with data.
 	for(int i=0; i<_vertexCount; i++)
 	{
-		vertices[i].position = D3DXVECTOR3(_model[i].x, _model[i].y, _model[i].z);
-		vertices[i].texture = D3DXVECTOR2(_model[i].tu, _model[i].tv);
-		vertices[i].normal = D3DXVECTOR3(_model[i].nx, _model[i].ny, _model[i].nz);
+		vertices[i].position = D3DXVECTOR3(_modelArray[i].x, _modelArray[i].y, _modelArray[i].z);
+		vertices[i].texture = D3DXVECTOR2(_modelArray[i].tu, _modelArray[i].tv);
+		vertices[i].normal = D3DXVECTOR3(_modelArray[i].nx, _modelArray[i].ny, _modelArray[i].nz);
 
 		indices[i] = i;
 	}
@@ -244,6 +244,226 @@ void Model::ReleaseTexture()
 
 bool Model::LoadModel(char* file)
 {
+
+	ifstream ifs;
+	char data;
+
+
+	int vertexCount = 0;
+	int textureCount = 0;
+	int normalsCount = 0;
+	int faceCount = 0;
+
+	ifs.open(file);
+
+	if(ifs.fail()== true)
+	{
+		return false;
+	}
+
+	ifs.get(data);
+	while(!ifs.eof())
+	{
+		if(data == 'v')
+		{
+			ifs.get(data);
+
+			if(data == ' ')
+			{ 
+				vertexCount++; 
+			}
+			if(data == 't') 
+			{ 
+				textureCount++;
+			}
+			if(data == 'n') 
+			{
+				normalsCount++; 
+			}
+		}
+
+		// If the line starts with 'f' then increment the face count.
+		if(data == 'f')
+		{
+			ifs.get(data);
+			if(data == ' ') 
+			{ 
+				faceCount++;
+			}
+		}
+		
+		// Otherwise read in the remainder of the line.
+		while(data != '\n')
+		{
+			ifs.get(data);
+		}
+
+		// Start reading the beginning of the next line.
+		ifs.get(data);
+	}
+
+	// Close the file.
+	ifs.close();
+
+	_verteciesArray = new VertexLoader[vertexCount];
+	_texturesArray = new Textures[textureCount];
+	_normalsArray = new VertexLoader[normalsCount];
+	_facesArray = new Faces[faceCount];
+
+
+
+	ifs.open(file);
+
+	vertexCount = 0;
+	textureCount = 0;
+	normalsCount = 0;
+	faceCount = 0;
+
+	ifs.get(data);
+	while(!ifs.eof())
+	{
+		
+
+		if(data == 'v')
+		{
+			ifs.get(data);
+
+			if(data ==' ')
+			{
+				ifs >> _verteciesArray[vertexCount].x >> _verteciesArray[vertexCount].y >> _verteciesArray[vertexCount].z;
+
+				_verteciesArray[vertexCount].z = _verteciesArray[vertexCount].z * -1.0f;
+				vertexCount++;
+			}
+
+			if(data == 't')
+			{
+
+				ifs>>_texturesArray[textureCount].tu>>_texturesArray[textureCount].tv;
+				_texturesArray[textureCount].tv = 1.0f - _texturesArray[textureCount].tv;
+
+				textureCount++;
+
+			}
+
+			if(data =='n')
+			{
+				ifs>>_normalsArray[normalsCount].x>>_normalsArray[normalsCount].y>>_normalsArray[normalsCount].z;
+
+				_normalsArray[normalsCount].z = _normalsArray[normalsCount].z *-1.0f;
+
+				normalsCount++;
+			}
+		}
+
+
+		if(data == 'f')
+		{
+			ifs.get(data);
+
+			if(data == ' ')
+			{
+				char forwardslash;
+
+				//read in backwards
+
+				ifs>>_facesArray[faceCount].vertexIndex3>>forwardslash>>_facesArray[faceCount].textureIndex3>>forwardslash>>_facesArray[faceCount].normalIndex3
+					>>_facesArray[faceCount].vertexIndex2>>forwardslash>>_facesArray[faceCount].textureIndex2>>forwardslash>>_facesArray[faceCount].normalIndex2
+					>>_facesArray[faceCount].vertexIndex1>>forwardslash>>_facesArray[faceCount].textureIndex1>>forwardslash>>_facesArray[faceCount].normalIndex1;
+
+				faceCount++;
+
+			}
+
+		}
+
+		while(data !='\n')
+		{
+
+			ifs.get(data);
+		}
+
+		ifs.get(data);
+
+
+	}
+
+	int modelCount = 0;
+
+	_model = new ModelValues[faceCount*3];
+	if(!_model)
+	{
+		return false;
+	}
+
+	for(int i = 0; i < faceCount*3; i++)
+	{
+		ModelValues model;
+		_modelArray.push_back(model);
+	}
+
+	ifs.close();
+
+	_vertexCount = faceCount*3;
+	_indexCount =  _vertexCount;
+	int vIndex, tIndex, nIndex;
+
+	for(int i=0; i<faceCount; i++)
+	{
+		vIndex = _facesArray[i].vertexIndex1 - 1;
+		tIndex = _facesArray[i].textureIndex1 - 1;
+		nIndex = _facesArray[i].normalIndex1 - 1;
+
+		_modelArray[modelCount].x = _verteciesArray[vIndex].x;
+		_modelArray[modelCount].y = _verteciesArray[vIndex].y;
+		_modelArray[modelCount].z = _verteciesArray[vIndex].z;
+
+		_modelArray[modelCount].tu = _texturesArray[tIndex].tu;
+		_modelArray[modelCount].tv = _texturesArray[tIndex].tv;
+
+
+		_modelArray[modelCount].nx = _normalsArray[nIndex].x;
+		_modelArray[modelCount].ny = _normalsArray[nIndex].y;
+		_modelArray[modelCount].nz = _normalsArray[nIndex].z;
+
+		modelCount++;
+		vIndex = _facesArray[i].vertexIndex2 - 1;
+		tIndex = _facesArray[i].textureIndex2 - 1;
+		nIndex = _facesArray[i].normalIndex2 - 1;
+
+		_modelArray[modelCount].x = _verteciesArray[vIndex].x;
+		_modelArray[modelCount].y = _verteciesArray[vIndex].y;
+		_modelArray[modelCount].z = _verteciesArray[vIndex].z;
+
+		_modelArray[modelCount].tu = _texturesArray[tIndex].tu;
+		_modelArray[modelCount].tv = _texturesArray[tIndex].tv;
+
+
+		_modelArray[modelCount].nx = _normalsArray[nIndex].x;
+		_modelArray[modelCount].ny = _normalsArray[nIndex].y;
+		_modelArray[modelCount].nz = _normalsArray[nIndex].z;
+
+		modelCount++;
+		vIndex = _facesArray[i].vertexIndex3 - 1;
+		tIndex = _facesArray[i].textureIndex3 - 1;
+		nIndex = _facesArray[i].normalIndex3 - 1;
+
+		_modelArray[modelCount].x = _verteciesArray[vIndex].x;
+		_modelArray[modelCount].y = _verteciesArray[vIndex].y;
+		_modelArray[modelCount].z = _verteciesArray[vIndex].z;
+
+		_modelArray[modelCount].tu = _texturesArray[tIndex].tu;
+		_modelArray[modelCount].tv = _texturesArray[tIndex].tv;
+
+
+		_modelArray[modelCount].nx = _normalsArray[nIndex].x;
+		_modelArray[modelCount].ny = _normalsArray[nIndex].y;
+		_modelArray[modelCount].nz = _normalsArray[nIndex].z;
+
+		modelCount++;
+	}
+
+	return true;
 	/*ObjectLoader loader;
 	int faces;
 	int faceCount = 0;
@@ -264,82 +484,109 @@ bool Model::LoadModel(char* file)
 
 	while( faceCount < faces)
 	{
-		for(int i = 0; i < 3; i++)
-		{
-			_model[modelCount].x = loader.GetFaceVertexX(faceCount,i);
-			_model[modelCount].y = loader.GetFaceVertexY(faceCount,i);
-			_model[modelCount].z = loader.GetFaceVertexZ(faceCount,i);
+		
+			_model[modelCount].x = loader.GetFaceVertexX(faceCount,0);
+			_model[modelCount].y = loader.GetFaceVertexY(faceCount,0);
+			_model[modelCount].z = loader.GetFaceVertexZ(faceCount,0);
 
-			_model[modelCount].tu = loader.GetFaceTextureTu(faceCount,i);
-			_model[modelCount].tv = loader.GetFaceTextureTV(faceCount,i);
+			
+			_model[modelCount].tu = loader.GetFaceTextureTu(faceCount,0);
+			_model[modelCount].tv = loader.GetFaceTextureTV(faceCount,0);
 
-			_model[modelCount].nx = loader.GetFaceNormalX(faceCount,i);
-			_model[modelCount].ny = loader.GetFaceNormalY(faceCount,i);
-			_model[modelCount].nz = loader.GetFaceNormalZ(faceCount,i);
+			_model[modelCount].nx = loader.GetFaceNormalX(faceCount,0);
+			_model[modelCount].ny = loader.GetFaceNormalY(faceCount,0);
+			_model[modelCount].nz = loader.GetFaceNormalZ(faceCount,0);
 
 			modelCount++;
-		}
+
+				_model[modelCount].x = loader.GetFaceVertexX(faceCount,1);
+			_model[modelCount].y = loader.GetFaceVertexY(faceCount,1);
+			_model[modelCount].z = loader.GetFaceVertexZ(faceCount,1);
+
+			
+			_model[modelCount].tu = loader.GetFaceTextureTu(faceCount,1);
+			_model[modelCount].tv = loader.GetFaceTextureTV(faceCount,1);
+
+			_model[modelCount].nx = loader.GetFaceNormalX(faceCount,1);
+			_model[modelCount].ny = loader.GetFaceNormalY(faceCount,1);
+			_model[modelCount].nz = loader.GetFaceNormalZ(faceCount,1);
+
+			modelCount++;
+
+				_model[modelCount].x = loader.GetFaceVertexX(faceCount,2);
+			_model[modelCount].y = loader.GetFaceVertexY(faceCount,2);
+			_model[modelCount].z = loader.GetFaceVertexZ(faceCount,2);
+
+			
+			_model[modelCount].tu = loader.GetFaceTextureTu(faceCount,2);
+			_model[modelCount].tv = loader.GetFaceTextureTV(faceCount,2);
+
+			_model[modelCount].nx = loader.GetFaceNormalX(faceCount,2);
+			_model[modelCount].ny = loader.GetFaceNormalY(faceCount,2);
+			_model[modelCount].nz = loader.GetFaceNormalZ(faceCount,2);
+
+			modelCount++;
 
 		faceCount++;
 	}
 
 	return true;*/
 
-	ifstream fin;
-	char input;
-	int i;
+	//ifstream fin;
+	//char input;
+	//int i;
 
 
-	// Open the model file.
-	fin.open(file);
-	
-	// If it could not open the file then exit.
-	if(fin.fail())
-	{
-		return false;
-	}
+	//// Open the model file.
+	//fin.open(file);
+	//
+	//// If it could not open the file then exit.
+	//if(fin.fail())
+	//{
+	//	return false;
+	//}
 
-	// Read up to the value of vertex count.
-	fin.get(input);
-	while(input != ':')
-	{
-		fin.get(input);
-	}
+	//// Read up to the value of vertex count.
+	//fin.get(input);
+	//while(input != ':')
+	//{
+	//	fin.get(input);
+	//}
 
-	// Read in the vertex count.
-	fin >> _vertexCount;
+	//// Read in the vertex count.
+	//fin >> _vertexCount;
 
-	// Set the number of indices to be the same as the vertex count.
-	_indexCount = _vertexCount;
+	//// Set the number of indices to be the same as the vertex count.
+	//_indexCount = _vertexCount;
 
-	// Create the model using the vertex count that was read in.
-	_model = new ModelValues[_vertexCount];
-	if(!_model)
-	{
-		return false;
-	}
+	//// Create the model using the vertex count that was read in.
+	//_model = new ModelValues[_vertexCount];
+	//if(!_model)
+	//{
+	//	return false;
+	//}
 
-	// Read up to the beginning of the data.
-	fin.get(input);
-	while(input != ':')
-	{
-		fin.get(input);
-	}
-	fin.get(input);
-	fin.get(input);
+	//// Read up to the beginning of the data.
+	//fin.get(input);
+	//while(input != ':')
+	//{
+	//	fin.get(input);
+	//}
+	//fin.get(input);
+	//fin.get(input);
 
-	// Read in the vertex data.
-	for(i=0; i<_vertexCount; i++)
-	{
-		fin >> _model[i].x >> _model[i].y >> _model[i].z;
-		fin >> _model[i].tu >> _model[i].tv;
-		fin >> _model[i].nx >> _model[i].ny >> _model[i].nz;
-	}
+	//// Read in the vertex data.
+	//for(i=0; i<_vertexCount; i++)
+	//{
+	//	fin >> _model[i].x >> _model[i].y >> _model[i].z;
+	//	fin >> _model[i].tu >> _model[i].tv;
+	//	fin >> _model[i].nx >> _model[i].ny >> _model[i].nz;
+	//}
 
-	// Close the model file.
-	fin.close();
+	//// Close the model file.
+	//fin.close();
 
-	return true;
+	//return true;
 }
 
 

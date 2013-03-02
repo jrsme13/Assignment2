@@ -8,7 +8,9 @@
 #include<D3DX10math.h>
 #include "Texture.h"
 #include "ObjectLoader.h"
+#include <vector>
 using namespace std;
+
 
 
 class Model
@@ -42,6 +44,23 @@ private:
 		float nx, ny, nz;
 	};
 
+	struct VertexLoader// this can be use for normals aswell
+	{
+		float x,y,z;
+	};
+
+	struct Textures
+	{
+		float tu,tv;
+	};
+
+	struct Faces
+	{
+		int vertexIndex1, textureIndex1, normalIndex1;
+		int vertexIndex2, textureIndex2, normalIndex2;
+		int vertexIndex3, textureIndex3, normalIndex3;
+	};
+
 
 	bool InitializeBuffers(ID3D10Device*);
 	void ShutdownBuffers();
@@ -58,6 +77,14 @@ private:
 	Texture* _texture;
 
 	ModelValues* _model;
+
+	vector<ModelValues> _modelArray;
+
+
+	VertexLoader* _verteciesArray;
+	Textures* _texturesArray;
+	VertexLoader*	_normalsArray;
+	Faces* _facesArray;
 
 };
 
