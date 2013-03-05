@@ -48,8 +48,8 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	_camera->SetPosition(0.0f, 10.0f, -10.0f);
-	_camera->SetRotation(45.0f,0.0f,0.0f);
+	_camera->SetPosition(0.0f, 0.0f, -10.0f);
+	//_camera->SetRotation(45.0f,0.0f,0.0f);
 	// Create the model object.
 	_model = new Model;
 	if(!_model)
@@ -90,7 +90,9 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	// Initialize the light object.
 	_light->SetAmbient(0.15f,0.15f,0.15f,1.0f);
 	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_light->SetDirection(1.0f, 0.0f, 0.0f);
+	_light->SetDirection(1.0f, 0.0f, 1.0f);
+	_light->SetSpecularColour(1.0f,1.0f,1.0f,1.0f);
+	_light->SetSpecularPower(32.0f);
 
 	return true;
 }
@@ -201,7 +203,7 @@ bool graphics::Render(float rotation)
 
 	// Render the model using the color shader.
 	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture(),
-		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient());
+		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower());
 
 	// Present the rendered scene to the screen.
 	_D3D->DrawScene();

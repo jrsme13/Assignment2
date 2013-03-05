@@ -29,6 +29,19 @@ void Lights::SetAmbient(float red, float green, float blue, float alpha)
 }
 
 
+void Lights::SetSpecularColour(float red, float green, float blue, float alpha)
+{
+
+	_specColour = D3DXVECTOR4(red,green,blue,alpha);
+	return;
+}
+
+void Lights::SetSpecularPower(float power)
+{
+	_specPower = power;
+	return;
+}
+
 void Lights::SetDirection(float x, float y, float z)
 {
 	_direction = D3DXVECTOR3(x, y, z);
@@ -51,4 +64,17 @@ D3DXVECTOR4 Lights::GetAmbient()
 {
 	return _ambient;
 
+}
+
+D3DXVECTOR4 Lights::GetSpecularColor()
+{
+	return _specColour;
+
+}
+
+
+float Lights::GetSpecularPower()
+{
+
+	return _specPower;
 }
