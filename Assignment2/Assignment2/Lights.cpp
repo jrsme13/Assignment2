@@ -21,6 +21,13 @@ void Lights::SetDiffuseColor(float red, float green, float blue, float alpha)
 	return;
 }
 
+void Lights::SetAmbient(float red, float green, float blue, float alpha)
+{
+	_ambient = D3DXVECTOR4(red,green,blue,alpha);
+	return;
+
+}
+
 
 void Lights::SetDirection(float x, float y, float z)
 {
@@ -38,4 +45,10 @@ D3DXVECTOR4 Lights::GetDiffuseColor()
 D3DXVECTOR3 Lights::GetDirection()
 {
 	return _direction;
+}
+
+D3DXVECTOR4 Lights::GetAmbient()
+{
+	return _ambient;
+
 }

@@ -20,7 +20,7 @@ public:
 
 	bool Initialize(ID3D10Device*, HWND);
 	void Shutdown();
-	void Render(ID3D10Device*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX,ID3D10ShaderResourceView*,D3DXVECTOR3, D3DXVECTOR4);
+	void Render(ID3D10Device*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX,ID3D10ShaderResourceView*,D3DXVECTOR3, D3DXVECTOR4,D3DXVECTOR4);
 
 
 private:
@@ -35,6 +35,7 @@ private:
 	ID3D10EffectShaderResourceVariable* _texturePtr;
 	ID3D10EffectVectorVariable* _lightDirPtr;
 	ID3D10EffectVectorVariable* _diffusePtr;
+	ID3D10EffectVectorVariable* _ambientPtr;
 
 
 
@@ -43,7 +44,7 @@ private:
 	void ShutdownShader();
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
 
-	void SetShaderParameters(D3DXMATRIX, D3DXMATRIX, D3DXMATRIX,ID3D10ShaderResourceView*,D3DXVECTOR3, D3DXVECTOR4);
+	void SetShaderParameters(D3DXMATRIX, D3DXMATRIX, D3DXMATRIX,ID3D10ShaderResourceView*,D3DXVECTOR3, D3DXVECTOR4,D3DXVECTOR4);
 	void RenderShader(ID3D10Device*, int);
 };
 

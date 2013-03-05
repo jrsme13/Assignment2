@@ -48,8 +48,8 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	_camera->SetPosition(0.0f, 0.0f, -10.0f);
-	
+	_camera->SetPosition(0.0f, 10.0f, -10.0f);
+	_camera->SetRotation(45.0f,0.0f,0.0f);
 	// Create the model object.
 	_model = new Model;
 	if(!_model)
@@ -58,7 +58,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = _model->Initialize(_D3D->GetDevice(),"../Assignment2/cube.obj",L"../Assignment2/seafloor.dds");
+	result = _model->Initialize(_D3D->GetDevice(),"../Assignment2/sphere.obj",L"../Assignment2/seafloor.dds");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
@@ -88,8 +88,9 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the light object.
+	_light->SetAmbient(0.15f,0.15f,0.15f,1.0f);
 	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_light->SetDirection(0.0f, 0.0f, 1.0f);
+	_light->SetDirection(1.0f, 0.0f, 0.0f);
 
 	return true;
 }
@@ -157,7 +158,7 @@ bool graphics::Frame()
 
 
 	// Update the rotation variable each frame.
-	rotation += (float)D3DX_PI * 0.01f;
+	rotation += (float)D3DX_PI * 0.0001f;
 	if(rotation > 360.0f)
 	{
 		rotation = -365.0f;
@@ -200,7 +201,7 @@ bool graphics::Render(float rotation)
 
 	// Render the model using the color shader.
 	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture(),
-		_light->GetDirection(), _light->GetDiffuseColor());
+		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient());
 
 	// Present the rendered scene to the screen.
 	_D3D->DrawScene();
