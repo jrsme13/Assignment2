@@ -161,7 +161,7 @@ bool shader::InitializeShader(ID3D10Device* device, HWND hwnd,WCHAR* filename)
 	_lightDirPtr = _effect->GetVariableByName("lightDirection")->AsVector();
 	_diffusePtr = _effect->GetVariableByName("diffuseColor")->AsVector();
 	_ambientPtr = _effect->GetVariableByName("ambient")->AsVector();
-	_cameraPositionPtr =_effect->GetVariableByName("camerPos")->AsVector();
+	_cameraPositionPtr =_effect->GetVariableByName("cameraPos")->AsVector();
 	_specularColorPtr = _effect->GetVariableByName("specCol")->AsVector();
 	_specularPowerPtr = _effect->GetVariableByName("specPower")->AsScalar();
 	return true;
