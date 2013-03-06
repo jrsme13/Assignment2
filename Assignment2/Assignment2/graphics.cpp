@@ -6,9 +6,13 @@ graphics::graphics()
 	_D3D = 0;
 	_camera = 0;
 	_model = 0;
+	_model2 = 0;
 	_shader = 0;
 	//_texture = 0;
-	_light = 0;
+	_light1 = 0;
+	_light2 = 0;
+	_light3 = 0;
+	_light4 = 0;
 }
 
 graphics::graphics(const graphics& other)
@@ -48,8 +52,8 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	_camera->SetPosition(0.0f, 0.0f, -10.0f);
-	//_camera->SetRotation(45.0f,0.0f,0.0f);
+	_camera->SetPosition(0.0f, 10.0f, -10.0f);
+	_camera->SetRotation(45.0f,0.0f,0.0f);
 	// Create the model object.
 	_model = new Model;
 	if(!_model)
@@ -58,12 +62,19 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = _model->Initialize(_D3D->GetDevice(),"../Assignment2/sphere.obj",L"../Assignment2/seafloor.dds");
+	result = _model->Initialize(_D3D->GetDevice(),"../Assignment2/scene.obj",L"../Assignment2/grey.dds");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
+
+	//result = _model2->Initialize(_D3D->GetDevice(),"../Assignment2/sphere.obj",L"../Assignment2/seafloor.dds");
+	//if(!result)
+	//{
+	//	MessageBox(hwnd, L"Could not initialize the model2 object.", L"Error", MB_OK);
+	//	return false;
+	//}
 
 	// Create the color shader object.
 	_shader = new shader;
@@ -81,18 +92,44 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Create the light object.
-	_light = new Lights;
-	if(!_light)
+	_light1 = new Lights;
+	if(!_light1)
 	{
 		return false;
 	}
 
+	_light1->SetDiffuseColor(1.0f,0.0f,0.0f,1.0f);
+	_light1->SetPosition(-3.0f,1.0f,3.0f);
+
+	_light2 = new Lights;
+	if(!_light2)
+	{
+		return false;
+	}
+
+	_light2->SetDiffuseColor(0.0f,1.0f,0.0f,1.0f);
+	_light2->SetPosition(3.0f,1.0f,3.0f);
+
+	_light3 = new Lights;
+	if(!_light3)
+	{
+		return false;
+	}
+
+	_light3->SetDiffuseColor(0.0f,0.0f,1.0f,1.0f);
+	_light3->SetPosition(-3.0f,1.0f,-3.0f);
+
+	_light4 = new Lights;
+	if(!_light4)
+	{
+		return false;
+	}
+
+	_light4->SetDiffuseColor(1.0f,1.0f,1.0f,1.0f);
+	_light4->SetPosition(3.0f,1.0f,-3.0f);
+
 	// Initialize the light object.
-	_light->SetAmbient(0.15f,0.15f,0.15f,1.0f);
-	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_light->SetDirection(1.0f, 0.0f, 1.0f);
-	_light->SetSpecularColour(1.0f,1.0f,1.0f,1.0f);
-	_light->SetSpecularPower(10.0f);
+	
 
 	return true;
 }
@@ -102,10 +139,28 @@ void graphics::Shutdown()
 
 
 	// Release the light object.
-	if(_light)
+	if(_light1)
 	{
-		delete _light;
-		_light = 0;
+		delete _light1;
+		_light1 = 0;
+	}
+
+	if(_light2)
+	{
+		delete _light2;
+		_light2 = 0;
+	}
+
+	if(_light3)
+	{
+		delete _light3;
+		_light3 = 0;
+	}
+
+	if(_light4)
+	{
+		delete _light4;
+		_light4 = 0;
 	}
 
 	// Release the texture shader object.
@@ -132,6 +187,13 @@ void graphics::Shutdown()
 		delete _model;
 		_model = 0;
 	}
+
+	//if(_model2)
+	//{
+	//	_model2->Shutdown();
+	//	delete _model2;
+	//	_model2 = 0;
+	//}
 
 	// Release the camera object.
 	if(_camera)
@@ -182,7 +244,19 @@ bool graphics::Render(float rotation)
 	//_D3D->SetupScene(255.f,0.f, 0.f, 1.0f);
 
 	D3DXMATRIX viewMatrix, projectionMatrix, worldMatrix;
+	D3DXVECTOR4 diffuseColor[4];
+	D3DXVECTOR3 lightPosition[4];
 
+	diffuseColor[0] = _light1->GetDiffuseColor();
+	diffuseColor[1] = _light2->GetDiffuseColor();
+	diffuseColor[2] = _light3->GetDiffuseColor();
+	diffuseColor[3] = _light4->GetDiffuseColor();
+
+	// Create the light position array from the four light positions.
+	lightPosition[0] = _light1->GetPosition();
+	lightPosition[1] = _light2->GetPosition();
+	lightPosition[2] = _light3->GetPosition();
+	lightPosition[3] = _light4->GetPosition();
 
 	// Clear the buffers to begin the scene.
 	_D3D->SetupScene(0.0f, 0.0f, 0.0f, 1.0f);
@@ -196,14 +270,18 @@ bool graphics::Render(float rotation)
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 
-	D3DXMatrixRotationY(&worldMatrix, rotation);
+	//D3DXMatrixRotationX(&worldMatrix, 90.0f);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_model->RenderToGraphics(_D3D->GetDevice());
 
 	// Render the model using the color shader.
 	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture(),
-		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower());
+		lightPosition, diffuseColor);
+
+	/*_model2->RenderToGraphics(_D3D->GetDevice());
+	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model2->GetTexture(),
+		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower());*/
 
 	// Present the rendered scene to the screen.
 	_D3D->DrawScene();

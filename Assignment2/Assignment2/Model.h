@@ -61,6 +61,26 @@ private:
 		int vertexIndex3, textureIndex3, normalIndex3;
 	};
 
+	ID3D10Buffer *_vertexBuffer, *_indexBuffer;
+	int _vertexCount, _indexCount;
+	Texture* _texture;
+
+	ModelValues* _model;
+
+	vector<ModelValues> _modelArray;
+
+
+	VertexLoader* _vertecies;
+	Textures* _textures;
+	VertexLoader*	_normals;
+	Faces* _faces;
+
+	vector<VertexLoader> _verteciesArray;
+	vector<Textures> _textureArray;
+	vector<VertexLoader>	_normalsArray;
+	vector<Faces>		_facesArray;
+
+
 
 	bool InitializeBuffers(ID3D10Device*);
 	void ShutdownBuffers();
@@ -72,19 +92,6 @@ private:
 	void ReleaseModel();
 
 
-	ID3D10Buffer *_vertexBuffer, *_indexBuffer;
-	int _vertexCount, _indexCount;
-	Texture* _texture;
-
-	ModelValues* _model;
-
-	vector<ModelValues> _modelArray;
-
-
-	VertexLoader* _verteciesArray;
-	Textures* _texturesArray;
-	VertexLoader*	_normalsArray;
-	Faces* _facesArray;
 
 };
 

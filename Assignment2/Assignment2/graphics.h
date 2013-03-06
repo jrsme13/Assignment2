@@ -35,9 +35,10 @@ private:
 	Direct3D* _D3D;
 	camera* _camera;
 	Model* _model;
+	Model* _model2;
 	shader* _shader;
 	Texture* _texture;
-	Lights* _light;
+	Lights *_light1,*_light2,*_light3,*_light4;
 
 	bool Render(float);
 };

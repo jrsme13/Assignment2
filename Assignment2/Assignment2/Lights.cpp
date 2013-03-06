@@ -42,6 +42,12 @@ void Lights::SetSpecularPower(float power)
 	return;
 }
 
+void Lights::SetPosition(float x, float y, float z)
+{
+	_position = D3DXVECTOR3(x,y,z);
+	return;
+}
+
 void Lights::SetDirection(float x, float y, float z)
 {
 	_direction = D3DXVECTOR3(x, y, z);
@@ -53,6 +59,7 @@ D3DXVECTOR4 Lights::GetDiffuseColor()
 {
 	return _diffuseColor;
 }
+
 
 
 D3DXVECTOR3 Lights::GetDirection()
@@ -77,4 +84,10 @@ float Lights::GetSpecularPower()
 {
 
 	return _specPower;
+}
+
+D3DXVECTOR3 Lights::GetPosition()
+{
+
+	return _position;
 }

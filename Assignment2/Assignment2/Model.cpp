@@ -9,6 +9,10 @@ Model::Model()
 	_indexBuffer = 0;
 	_texture = 0;
 	_model = 0;
+	/*_verteciesArray = 0;
+	_texturesArray = 0;
+	_normalsArray = 0;
+	_facesArray = 0;*/
 }
 
 Model::Model(const Model& other)
@@ -159,6 +163,7 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 	delete [] indices;
 	indices = 0;
 
+
 	return true;
 }
 
@@ -305,10 +310,47 @@ bool Model::LoadModel(char* file)
 	// Close the file.
 	ifs.close();
 
-	_verteciesArray = new VertexLoader[vertexCount];
-	_texturesArray = new Textures[textureCount];
-	_normalsArray = new VertexLoader[normalsCount];
-	_facesArray = new Faces[faceCount];
+	//delete [] _verteciesArray;
+	//_verteciesArray = 0;
+
+	//delete []  _texturesArray;
+	//_texturesArray = 0;
+
+	//delete [] _normalsArray;
+	//_normalsArray = 0;
+
+	//delete [] _facesArray;
+	//_facesArray = 0;
+
+	for(int i = 0; i < vertexCount; i++)
+	{
+		VertexLoader vertecies;
+		_verteciesArray.push_back(vertecies);
+	}
+
+
+	//_verteciesArray = new VertexLoader[vertexCount];
+
+		for(int i = 0; i < textureCount; i++)
+	{
+		Textures tex;
+		_textureArray.push_back(tex);
+	}
+	//_texturesArray = new Textures[textureCount];
+	
+	for(int i = 0; i <	normalsCount; i++)
+	{
+		VertexLoader normal;
+		_normalsArray.push_back(normal);
+	}
+	//_normalsArray = new VertexLoader[normalsCount];
+
+	for(int i = 0; i <	faceCount; i++)
+	{
+		Faces f;
+		_facesArray.push_back(f);
+	}
+	//_facesArray = new Faces[faceCount];
 
 
 
@@ -339,8 +381,8 @@ bool Model::LoadModel(char* file)
 			if(data == 't')
 			{
 
-				ifs>>_texturesArray[textureCount].tu>>_texturesArray[textureCount].tv;
-				_texturesArray[textureCount].tv = 1.0f - _texturesArray[textureCount].tv;
+				ifs>>_textureArray[textureCount].tu>>_textureArray[textureCount].tv;
+				_textureArray[textureCount].tv = 1.0f - _textureArray[textureCount].tv;
 
 				textureCount++;
 
@@ -418,8 +460,8 @@ bool Model::LoadModel(char* file)
 		_modelArray[modelCount].y = _verteciesArray[vIndex].y;
 		_modelArray[modelCount].z = _verteciesArray[vIndex].z;
 
-		_modelArray[modelCount].tu = _texturesArray[tIndex].tu;
-		_modelArray[modelCount].tv = _texturesArray[tIndex].tv;
+		_modelArray[modelCount].tu = _textureArray[tIndex].tu;
+		_modelArray[modelCount].tv = _textureArray[tIndex].tv;
 
 
 		_modelArray[modelCount].nx = _normalsArray[nIndex].x;
@@ -435,8 +477,8 @@ bool Model::LoadModel(char* file)
 		_modelArray[modelCount].y = _verteciesArray[vIndex].y;
 		_modelArray[modelCount].z = _verteciesArray[vIndex].z;
 
-		_modelArray[modelCount].tu = _texturesArray[tIndex].tu;
-		_modelArray[modelCount].tv = _texturesArray[tIndex].tv;
+		_modelArray[modelCount].tu = _textureArray[tIndex].tu;
+		_modelArray[modelCount].tv = _textureArray[tIndex].tv;
 
 
 		_modelArray[modelCount].nx = _normalsArray[nIndex].x;
@@ -452,8 +494,8 @@ bool Model::LoadModel(char* file)
 		_modelArray[modelCount].y = _verteciesArray[vIndex].y;
 		_modelArray[modelCount].z = _verteciesArray[vIndex].z;
 
-		_modelArray[modelCount].tu = _texturesArray[tIndex].tu;
-		_modelArray[modelCount].tv = _texturesArray[tIndex].tv;
+		_modelArray[modelCount].tu = _textureArray[tIndex].tu;
+		_modelArray[modelCount].tv = _textureArray[tIndex].tv;
 
 
 		_modelArray[modelCount].nx = _normalsArray[nIndex].x;
@@ -462,6 +504,8 @@ bool Model::LoadModel(char* file)
 
 		modelCount++;
 	}
+
+
 
 	return true;
 	/*ObjectLoader loader;
