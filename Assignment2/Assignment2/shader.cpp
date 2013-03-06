@@ -250,7 +250,7 @@ void shader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR
 
 
 void shader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,ID3D10ShaderResourceView* texture,
-	D3DXVECTOR3 lightPos[], D3DXVECTOR4 diffuse[]/*,D3DXVECTOR4 ambient,D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower*/)
+	D3DXVECTOR3 lightPosition[], D3DXVECTOR4 diffused[]/*,D3DXVECTOR4 ambient,D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower*/)
 {
 	// Set the world matrix variable inside the shader.
 	_worldMatrixPtr->SetMatrix((float*)&worldMatrix);
@@ -264,8 +264,8 @@ void shader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
 	_texturePtr->SetResource(texture);
 	//_ambientPtr->SetFloatVector((float*)&ambient);
 	//_lightDirPtr->SetFloatVector((float*)&lightDir);
-	_lightPosPtr->SetFloatVectorArray((float*)&lightPos,0,4);
-	_diffusePtr->SetFloatVectorArray((float*)&diffuse,0,4);
+	_lightPosPtr->SetFloatVectorArray((float*)&lightPosition,0,4);
+	_diffusePtr->SetFloatVectorArray((float*)&diffused,0,4);
 	//_cameraPositionPtr->SetFloatVector((float*)&cameraPos);
 	//_specularColorPtr->SetFloatVector((float*)&specularColor);
 	//_specularPowerPtr->SetFloat(specularPower);

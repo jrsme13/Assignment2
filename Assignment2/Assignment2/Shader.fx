@@ -97,16 +97,17 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 {
     float4 textureColor;
 	//float3 lightDir;
-    float lightIntensity1,lightIntensity2,lightIntensity3,lightIntensity4;
-    float4 color,color1,color2,color3,color4;
+    float lightIntensity1, lightIntensity2, lightIntensity3, lightIntensity4;
+    float4 color, color1, color2, color3, color4;
 	//float3 reflection;
 	//float4 specular;
 
-	lightIntensity1 = saturate(dot(input.normal, input.lightPos1));
+	//lightIntensity1 = saturate(dot(input.normal, input.lightPos1));
     lightIntensity2 = saturate(dot(input.normal, input.lightPos2));
     lightIntensity3 = saturate(dot(input.normal, input.lightPos3));
     lightIntensity4 = saturate(dot(input.normal, input.lightPos4));
     
+	lightIntensity1 = (((input.normal.x) * (input.lightPos1.x))+((input.normal.y) * (input.lightPos1.y))+((-input.normal.z) * (input.lightPos1.z)));
 
 	color1 = diffuseColor[0] * lightIntensity1;
     color2 = diffuseColor[1] * lightIntensity2;
@@ -115,7 +116,9 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 
     textureColor = shaderTexture.Sample(SampleType, input.tex);
 
-	color = saturate(color1 + color2 + color3 + color4) * textureColor;
+	color.rgb = lightIntensity1;
+
+	
 	return color;
 	//color = ambient;
 

@@ -62,19 +62,25 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = _model->Initialize(_D3D->GetDevice(),"../Assignment2/scene.obj",L"../Assignment2/grey.dds");
+	result = _model->Initialize(_D3D->GetDevice(),"../Assignment2/plane.obj",L"../Assignment2/grey.dds");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
 		return false;
 	}
 
-	//result = _model2->Initialize(_D3D->GetDevice(),"../Assignment2/sphere.obj",L"../Assignment2/seafloor.dds");
-	//if(!result)
-	//{
-	//	MessageBox(hwnd, L"Could not initialize the model2 object.", L"Error", MB_OK);
-	//	return false;
-	//}
+	_model2 = new Model;
+	if(!_model2)
+	{
+		return false;
+	}
+
+	result = _model2->Initialize(_D3D->GetDevice(),"../Assignment2/sphere.obj",L"../Assignment2/seafloor.dds");
+	if(!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the model2 object.", L"Error", MB_OK);
+		return false;
+	}
 
 	// Create the color shader object.
 	_shader = new shader;
@@ -98,7 +104,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 		return false;
 	}
 
-	_light1->SetDiffuseColor(1.0f,0.0f,0.0f,1.0f);
+	_light1->SetDiffuseColor(1.0f,1.0f,1.0f,1.0f);
 	_light1->SetPosition(-3.0f,1.0f,3.0f);
 
 	_light2 = new Lights;
@@ -270,7 +276,7 @@ bool graphics::Render(float rotation)
 	_D3D->GetProjectionMatrix(projectionMatrix);
 
 
-	//D3DXMatrixRotationX(&worldMatrix, 90.0f);
+	D3DXMatrixRotationX(&worldMatrix, 90.0f);
 
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_model->RenderToGraphics(_D3D->GetDevice());
