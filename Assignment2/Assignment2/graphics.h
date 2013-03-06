@@ -38,7 +38,7 @@ private:
 	Model* _model2;
 	shader* _shader;
 	Texture* _texture;
-	Lights *_light1,*_light2,*_light3,*_light4;
+	Lights *_light;
 
 	bool Render(float);
 };

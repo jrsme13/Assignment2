@@ -2,7 +2,7 @@
 // Constant Buffer Variables
 //--------------------------------------------------------------------------------------
 
-#define NUM_LIGHTS 4
+
 
 
 matrix worldMatrix;
@@ -11,14 +11,19 @@ matrix projectionMatrix;
 Texture2D shaderTexture;
 
 
-float4 diffuseColor[NUM_LIGHTS];
-//float3 lightDirection;
-float3 lightPos[NUM_LIGHTS];
+float4 diffuseColor;
+float3 lightDirection;
 float4 ambient;
+
+float4 diffuseColor2;
+float3 lightDirection2;
 
 float3 cameraPos;
 float3 specCol;
 float specPower;
+
+float3 specCol2;
+float specPower2;
 
 // Texture Sample state
 
@@ -43,10 +48,9 @@ struct PixelInputType
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
 	float3 normal: NORMAL;
-	float3 lightPos1: TEXCOORD1;
-	float3 lightPos2: TEXCOORD2;
-	float3 lightPos3: TEXCOORD3;
-	float3 lightPos4: TEXCOORD4;
+	float3 viewDir: TEXCOORD1;
+	float3 viewDir2: TEXCOORD2;
+	
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,15 +81,11 @@ PixelInputType ColorVertexShader(VertexInputType input)
 
 	worldPos = mul(input.position, worldMatrix);
 
-	output.lightPos1 = lightPos[0].xyz - worldPos.xyz;
-	output.lightPos2 = lightPos[1].xyz - worldPos.xyz;
-	output.lightPos3 = lightPos[2].xyz - worldPos.xyz;
-	output.lightPos4 = lightPos[3].xyz - worldPos.xyz;
+	output.viewDir = cameraPos.xyz - worldPos.xyz;
+	
 
-	output.lightPos1 = normalize(output.lightPos1);
-	output.lightPos2 = normalize(output.lightPos2);
-	output.lightPos3 = normalize(output.lightPos3);
-	output.lightPos4 = normalize(output.lightPos4);
+	output.viewDir = normalize(output.viewDir);
+	
 
     return output;
 }
@@ -96,59 +96,46 @@ PixelInputType ColorVertexShader(VertexInputType input)
 float4 ColorPixelShader(PixelInputType input) : SV_Target
 {
     float4 textureColor;
-	//float3 lightDir;
-    float lightIntensity1, lightIntensity2, lightIntensity3, lightIntensity4;
-    float4 color, color1, color2, color3, color4;
-	//float3 reflection;
-	//float4 specular;
+	float3 lightDir;
+    float lightIntensity;
+    float4 color;
+	float3 reflection;
+	float4 specular;
 
-	//lightIntensity1 = saturate(dot(input.normal, input.lightPos1));
-    lightIntensity2 = saturate(dot(input.normal, input.lightPos2));
-    lightIntensity3 = saturate(dot(input.normal, input.lightPos3));
-    lightIntensity4 = saturate(dot(input.normal, input.lightPos4));
+	
     
-	lightIntensity1 = (((input.normal.x) * (input.lightPos1.x))+((input.normal.y) * (input.lightPos1.y))+((-input.normal.z) * (input.lightPos1.z)));
-
-	color1 = diffuseColor[0] * lightIntensity1;
-    color2 = diffuseColor[1] * lightIntensity2;
-    color3 = diffuseColor[2] * lightIntensity3;
-    color4 = diffuseColor[3] * lightIntensity4;
+	
 
     textureColor = shaderTexture.Sample(SampleType, input.tex);
 
-	color.rgb = lightIntensity1;
 
 	
-	return color;
-	//color = ambient;
+	color = ambient;
 
-	//specular = float4(0.0f,0.0f,0.0f,0.0f);
+	specular = float4(0.0f,0.0f,0.0f,0.0f);
 	    
-    //diretional light lightDir = -lightDirection;
+    lightDir = -lightDirection;
 
     
-    //lightIntensity = saturate(dot(input.normal, lightDir));
+    lightIntensity = saturate(dot(input.normal, lightDir));
 
-	//if (lightIntensity > 0.0f)
-	//{
+	if (lightIntensity > 0.0f)
+	{
 
-		//color +=(diffuseColor * lightIntensity);
-		//color = saturate(color);
+		color +=(diffuseColor * lightIntensity);
+		color = saturate(color);
 
-		//reflection = normalize(2*lightIntensity*input.normal - lightDir);
+		reflection = normalize(2*lightIntensity*input.normal - lightDir);
 
-		//specular = pow(saturate(dot(reflection,input.viewDir)),specPower);
-	//}
-
-    // Determine the final amount of diffuse color based on the diffuse color combined with the light intensity.
-    
-
-    // Multiply the texture pixel and the final diffuse color to get the final pixel color result.
-    //color = color * textureColor;
-	//color = saturate(color + specular);
-    
+		specular = pow(saturate(dot(reflection,input.viewDir)),specPower);
+	}
 
     
+    color = color * textureColor;
+	color = saturate(color + specular);
+    
+
+    return color;
 }
 
 
