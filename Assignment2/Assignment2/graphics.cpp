@@ -10,6 +10,7 @@ graphics::graphics()
 	_shader = 0;
 	//_texture = 0;
 	_light = 0;
+	_light2 = 0;
 	
 }
 
@@ -102,12 +103,24 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 		return false;
 	}
 
-	_light->SetAmbient(0.15f, 0.15f, 0.15f, 1.0f);
+	_light->SetAmbient(0.05f, 0.05f, 0.05f, 1.0f);
 	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light->SetDirection(1.0f, -1.0f, 1.0f);
 	_light->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
-	_light->SetSpecularPower(32.0f);
+	_light->SetSpecularPower(2.0f);
 
+
+	_light2 = new Lights;
+	if(!_light2)
+	{
+		return false;
+	}
+
+	_light2->SetAmbient(0.15f, 0.15f, 0.15f, 1.0f);
+	_light2->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
+	_light2->SetDirection(-1.0f, -1.0f, 1.0f);
+	_light2->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
+	_light2->SetSpecularPower(32.0f);
 	
 
 	// Initialize the light object.
@@ -127,6 +140,11 @@ void graphics::Shutdown()
 		_light = 0;
 	}
 
+	if(_light2)
+	{
+		delete _light2;
+		_light2 = 0;
+	}
 	
 
 	// Release the texture shader object.
@@ -229,7 +247,8 @@ bool graphics::Render(float rotation)
 
 	_model2->RenderToGraphics(_D3D->GetDevice());
 	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model2->GetTexture(),
-		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower());
+		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
+		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_model->RenderToGraphics(_D3D->GetDevice());
 
@@ -243,7 +262,8 @@ bool graphics::Render(float rotation)
 
 	// Render the model using the color shader.
 	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture(),
-		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower());
+		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
+		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
 
 	
 

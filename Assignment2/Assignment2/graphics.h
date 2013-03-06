@@ -12,7 +12,7 @@
 
 //global
 
-const bool FULL_SCREEN = false;
+const bool FULL_SCREEN = true;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 1000.0f;
 const float SCREEN_NEAR = 0.1f;
@@ -39,6 +39,7 @@ private:
 	shader* _shader;
 	Texture* _texture;
 	Lights *_light;
+	Lights *_light2;
 
 	bool Render(float);
 };

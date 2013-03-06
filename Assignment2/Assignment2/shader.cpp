@@ -17,9 +17,12 @@ shader::shader(void)
 
 
 	_lightDirPtr = 0;
-
-
 	_diffusePtr = 0;
+
+	_lightDirPtr2 = 0;
+	_diffusePtr2 = 0;
+
+
 	_lightPosPtr = 0;
 
 	_ambientPtr = 0;
@@ -27,6 +30,8 @@ shader::shader(void)
 	_cameraPositionPtr = 0;
 	_specularColorPtr = 0;
 	_specularPowerPtr = 0;
+	_specularColorPtr2 = 0;
+	_specularPowerPtr2 = 0;
 }
 
 shader::shader(const shader& other)
@@ -67,10 +72,11 @@ void shader::Shutdown()
 
 
 void shader::Render(ID3D10Device* device, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, ID3D10ShaderResourceView* texture,
-	D3DXVECTOR3 lightPos, D3DXVECTOR4 diffuse,D3DXVECTOR4 ambient,  D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower)
+	D3DXVECTOR3 lightDir, D3DXVECTOR4 diffuse,D3DXVECTOR4 ambient,  D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower,D3DXVECTOR3 lightDir2,D3DXVECTOR4 diffuse2,D3DXVECTOR4 specColor2,float specPower2)
 {
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix,texture,lightPos,diffuse, ambient, cameraPos, specularColor, specularPower);
+	SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix,texture,lightDir,diffuse, ambient, cameraPos, specularColor, specularPower,
+							lightDir2,diffuse2,specColor2,specPower2);
 
 	// Now render the prepared buffers with the shader.
 	RenderShader(device, indexCount);
@@ -169,10 +175,16 @@ bool shader::InitializeShader(ID3D10Device* device, HWND hwnd,WCHAR* filename)
 	_lightDirPtr = _effect->GetVariableByName("lightDirection")->AsVector();
 	_diffusePtr = _effect->GetVariableByName("diffuseColor")->AsVector();
 
+	_lightDirPtr2 = _effect->GetVariableByName("lightDirection2")->AsVector();
+	_diffusePtr2 = _effect->GetVariableByName("diffuseColor2")->AsVector();
+
 	_ambientPtr = _effect->GetVariableByName("ambient")->AsVector();
 	_cameraPositionPtr =_effect->GetVariableByName("cameraPos")->AsVector();
 	_specularColorPtr = _effect->GetVariableByName("specCol")->AsVector();
 	_specularPowerPtr = _effect->GetVariableByName("specPower")->AsScalar();
+
+	_specularColorPtr2 = _effect->GetVariableByName("specCol2")->AsVector();
+	_specularPowerPtr2 = _effect->GetVariableByName("specPower2")->AsScalar();
 	return true;
 
 }
@@ -182,11 +194,15 @@ void shader::ShutdownShader()
 	// Release the pointers to the matrices inside the shader.
 	_diffusePtr = 0;
 	_lightDirPtr= 0;
+	_diffusePtr2 = 0;
+	_lightDirPtr2= 0;
 	_lightPosPtr = 0;
 	_texturePtr = 0;
 	_cameraPositionPtr = 0;
 	_specularColorPtr = 0;
 	_specularPowerPtr = 0;
+	_specularColorPtr2 = 0;
+	_specularPowerPtr2 = 0;
 	_worldMatrixPtr = 0;
 	_viewMatrixPtr = 0;
 	_projectionMatrixPtr = 0;
@@ -250,7 +266,8 @@ void shader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR
 
 
 void shader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,ID3D10ShaderResourceView* texture,
-	D3DXVECTOR3 lightDir, D3DXVECTOR4 diffused,D3DXVECTOR4 ambient,D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower)
+	D3DXVECTOR3 lightDir, D3DXVECTOR4 diffused,D3DXVECTOR4 ambient,D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower,
+	D3DXVECTOR3 lightDir2,D3DXVECTOR4 diffuse2,D3DXVECTOR4 specColor2,float specPower2)
 {
 	// Set the world matrix variable inside the shader.
 	_worldMatrixPtr->SetMatrix((float*)&worldMatrix);
@@ -263,12 +280,22 @@ void shader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
 
 	_texturePtr->SetResource(texture);
 	_ambientPtr->SetFloatVector((float*)&ambient);
+
 	_lightDirPtr->SetFloatVector((float*)&lightDir);
-	
 	_diffusePtr->SetFloatVector((float*)&diffused);
+
+	_lightDirPtr2->SetFloatVector((float*)&lightDir2);
+	_diffusePtr2->SetFloatVector((float*)&diffuse2);
+
+
 	_cameraPositionPtr->SetFloatVector((float*)&cameraPos);
+
+
 	_specularColorPtr->SetFloatVector((float*)&specularColor);
 	_specularPowerPtr->SetFloat(specularPower);
+
+	_specularColorPtr2->SetFloatVector((float*)&specColor2);
+	_specularPowerPtr2->SetFloat(specPower2);
 
 	return;
 }

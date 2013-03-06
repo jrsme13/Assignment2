@@ -49,7 +49,6 @@ struct PixelInputType
     float2 tex : TEXCOORD0;
 	float3 normal: NORMAL;
 	float3 viewDir: TEXCOORD1;
-	float3 viewDir2: TEXCOORD2;
 	
 };
 
@@ -97,10 +96,17 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 {
     float4 textureColor;
 	float3 lightDir;
+	float3 lightDir2;
+
     float lightIntensity;
+	float lightIntensity2;
+
     float4 color;
 	float3 reflection;
+	float3 reflection2;
+
 	float4 specular;
+	float4 specular2;
 
 	
     
@@ -113,26 +119,40 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 	color = ambient;
 
 	specular = float4(0.0f,0.0f,0.0f,0.0f);
+	specular2 = float4(0.0f,0.0f,0.0f,0.0f);
 	    
     lightDir = -lightDirection;
-
+	lightDir2 = -lightDirection2;
     
     lightIntensity = saturate(dot(input.normal, lightDir));
+	lightIntensity2 = saturate(dot(input.normal, lightDir2));
 
 	if (lightIntensity > 0.0f)
 	{
 
 		color +=(diffuseColor * lightIntensity);
-		color = saturate(color);
+		//color = saturate(color);
 
 		reflection = normalize(2*lightIntensity*input.normal - lightDir);
 
 		specular = pow(saturate(dot(reflection,input.viewDir)),specPower);
 	}
 
+		if (lightIntensity2 > 0.0f)
+	{
+
+		color +=(diffuseColor2 * lightIntensity2);
+		//color = saturate(color);
+
+		reflection2 = normalize(2*lightIntensity2*input.normal - lightDir2);
+
+		specular2 = pow(saturate(dot(reflection2,input.viewDir)),specPower2);
+	}
+	
     
+    color = saturate(color);
     color = color * textureColor;
-	color = saturate(color + specular);
+	color = saturate(color + specular + specular2);
     
 
     return color;
