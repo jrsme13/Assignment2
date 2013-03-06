@@ -61,7 +61,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	// Initialize the model object.
-	result = _model->Initialize(_D3D->GetDevice(),"../Assignment2/plane.obj",L"../Assignment2/grey.dds");
+	result = _model->Initialize(_D3D->GetDevice(),"../Assignment2/plane.obj",L"../Assignment2/stone01.dds");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model object.", L"Error", MB_OK);
