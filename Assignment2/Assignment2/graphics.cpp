@@ -12,6 +12,7 @@ graphics::graphics()
 	_light = 0;
 	_light2 = 0;
 	_renderTexture = 0;
+	_depthShader = 0;
 	
 }
 
@@ -97,6 +98,20 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 		return false;
 	}
 
+	_depthShader = new DepthShader;
+	if(!_depthShader)
+	{
+		return false;
+	}
+
+	result = _depthShader->Initialize(_D3D->GetDevice(),hwnd);
+	if(!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the depthshader object.", L"Error", MB_OK);
+		return false;
+	}
+
+
 	// Create the light object.
 	_light = new Lights;
 	if(!_light)
@@ -181,6 +196,13 @@ void graphics::Shutdown()
 		_shader->Shutdown();
 		delete _shader;
 		_shader = 0;
+	}
+
+	if(_depthShader)
+	{
+		_depthShader->Shutdown();
+		delete _depthShader;
+		_depthShader = 0;
 	}
 
 	// Release the model object.
@@ -327,6 +349,8 @@ void graphics::RenderScene()
 	
 
 	_model2->RenderToGraphics(_D3D->GetDevice());
+
+	//_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model2->GetTexture(),
 		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
 		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
@@ -340,6 +364,8 @@ void graphics::RenderScene()
 	D3DXMatrixScaling(&tempC,2.0f,2.0f,2.0f);
 
 	D3DXMatrixMultiply(&worldMatrix,&worldMatrix,&tempC);
+
+	//_depthShader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 
 	// Render the model using the color shader.
 	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture(),

@@ -9,6 +9,7 @@
 #include "shader.h"
 #include "Lights.h"
 #include "RenderToTexture.h"
+#include "DepthShader.h"
 
 
 //global
@@ -43,6 +44,7 @@ private:
 	Lights *_light;
 	Lights *_light2;
 	RenderToTexture* _renderTexture;
+	DepthShader* _depthShader;
 
 	void RenderToTexTure();
 	void RenderScene();
