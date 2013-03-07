@@ -32,6 +32,12 @@ shader::shader(void)
 	_specularPowerPtr = 0;
 	_specularColorPtr2 = 0;
 	_specularPowerPtr2 = 0;
+
+	_depthMapTexturePtr = 0;
+	_lightViewMatrixPtr = 0;
+	_lightProjectionMatrixPtr = 0;
+
+
 }
 
 shader::shader(const shader& other)
@@ -71,11 +77,12 @@ void shader::Shutdown()
 }
 
 
-void shader::Render(ID3D10Device* device, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix, ID3D10ShaderResourceView* texture,
-	D3DXVECTOR3 lightDir, D3DXVECTOR4 diffuse,D3DXVECTOR4 ambient,  D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower,D3DXVECTOR3 lightDir2,D3DXVECTOR4 diffuse2,D3DXVECTOR4 specColor2,float specPower2)
+void shader::Render(ID3D10Device* device, int indexCount, D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,D3DXMATRIX lightViewMatrix,D3DXMATRIX lightProjectionMatrix, 
+	ID3D10ShaderResourceView* texture,ID3D10ShaderResourceView* depthMapTexture,D3DXVECTOR3 lightDir, D3DXVECTOR4 diffuse,D3DXVECTOR4 ambient,  D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor,
+	float specularPower,D3DXVECTOR3 lightDir2,D3DXVECTOR4 diffuse2,D3DXVECTOR4 specColor2,float specPower2)
 {
 	// Set the shader parameters that it will use for rendering.
-	SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix,texture,lightDir,diffuse, ambient, cameraPos, specularColor, specularPower,
+	SetShaderParameters(worldMatrix, viewMatrix, projectionMatrix,lightViewMatrix, lightProjectionMatrix,texture,depthMapTexture,lightDir,diffuse, ambient, cameraPos, specularColor, specularPower,
 							lightDir2,diffuse2,specColor2,specPower2);
 
 	// Now render the prepared buffers with the shader.
@@ -185,6 +192,10 @@ bool shader::InitializeShader(ID3D10Device* device, HWND hwnd,WCHAR* filename)
 
 	_specularColorPtr2 = _effect->GetVariableByName("specCol2")->AsVector();
 	_specularPowerPtr2 = _effect->GetVariableByName("specPower2")->AsScalar();
+
+	_lightViewMatrixPtr = _effect->GetVariableByName("lightViewMatrix")->AsMatrix();
+	_lightProjectionMatrixPtr = _effect->GetVariableByName("lightOrthoMatrix")->AsMatrix();
+	_depthMapTexturePtr = _effect->GetVariableByName("depthMapTexture")->AsShaderResource();
 	return true;
 
 }
@@ -207,6 +218,12 @@ void shader::ShutdownShader()
 	_viewMatrixPtr = 0;
 	_projectionMatrixPtr = 0;
 	_ambientPtr = 0;
+
+	_depthMapTexturePtr = 0;
+
+	
+	_lightViewMatrixPtr = 0;
+	_lightProjectionMatrixPtr = 0;
 
 	// Release the pointer to the shader layout.
 	if(_layout)
@@ -265,8 +282,8 @@ void shader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR
 }
 
 
-void shader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,ID3D10ShaderResourceView* texture,
-	D3DXVECTOR3 lightDir, D3DXVECTOR4 diffused,D3DXVECTOR4 ambient,D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower,
+void shader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,D3DXMATRIX lightViewMatrix,D3DXMATRIX lightProjectionMatrix,
+	ID3D10ShaderResourceView* texture,ID3D10ShaderResourceView* depthMapTexture,D3DXVECTOR3 lightDir, D3DXVECTOR4 diffused,D3DXVECTOR4 ambient,D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower,
 	D3DXVECTOR3 lightDir2,D3DXVECTOR4 diffuse2,D3DXVECTOR4 specColor2,float specPower2)
 {
 	// Set the world matrix variable inside the shader.
@@ -296,6 +313,10 @@ void shader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
 
 	_specularColorPtr2->SetFloatVector((float*)&specColor2);
 	_specularPowerPtr2->SetFloat(specPower2);
+
+	_lightViewMatrixPtr->SetMatrix((float*)&lightViewMatrix);
+	_lightProjectionMatrixPtr->SetMatrix((float*)&lightProjectionMatrix);
+	_depthMapTexturePtr->SetResource(depthMapTexture);
 
 	return;
 }
