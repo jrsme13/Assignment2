@@ -77,12 +77,14 @@
   <ItemGroup>
     <ClCompile Include="baseSetup.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="DepthShader.cpp" />
     <ClCompile Include="Direct3D.cpp" />
     <ClCompile Include="graphics.cpp" />
     <ClCompile Include="Lights.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="ObjectLoader.cpp" />
+    <ClCompile Include="RenderToTexture.cpp" />
     <ClCompile Include="shader.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="userInput.cpp" />
@@ -90,11 +92,13 @@
   <ItemGroup>
     <ClInclude Include="baseSetup.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="DepthShader.h" />
     <ClInclude Include="Direct3D.h" />
     <ClInclude Include="graphics.h" />
     <ClInclude Include="Lights.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="ObjectLoader.h" />
+    <ClInclude Include="RenderToTexture.h" />
     <ClInclude Include="shader.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="userInput.h" />
