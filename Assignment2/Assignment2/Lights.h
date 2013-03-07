@@ -26,6 +26,12 @@ public:
 	D3DXVECTOR4 GetSpecularColor();
 	float		GetSpecularPower();
 
+	void GenerateViewMatrix();
+	void GenerateProjectionMatrix(float, float);
+
+	void GetViewMatrix(D3DXMATRIX&);
+	void GetProjectionMatrix(D3DXMATRIX&);
+
 private:
 	D3DXVECTOR4 _diffuseColor;
 	D3DXVECTOR3 _position;
@@ -34,6 +40,9 @@ private:
 	D3DXVECTOR4 _ambient;
 	D3DXVECTOR4 _specColour;
 	float		_specPower;
+
+	D3DXMATRIX _viewMatrix;
+	D3DXMATRIX _projectionMatrix;
 
 };
 

@@ -91,7 +91,7 @@ PixelInputType ColorVertexShader(VertexInputType input)
 
 	output.lightViewPosition = mul(input.position, worldMatrix);
 	output.lightViewPosition = mul(output.lightViewPosition, lightViewMatrix);
-    output.lightViewPosition = mul(output.lightViewPosition, lightProjectionMatrix);
+    output.lightViewPosition = mul(output.lightViewPosition, lightOrthoMatrix);
     
     // Store the input color for the pixel shader to use.
     output.tex = input.tex;
@@ -148,7 +148,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 	
 	color = ambient;
 
-	orthoTexCoord.x = input.input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
+	orthoTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
     orthoTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w / 2.0f + 0.5f;
 
 	if((saturate(orthoTexCoord.x) == orthoTexCoord.x) && (saturate(orthoTexCoord.y) == orthoTexCoord.y))
@@ -197,7 +197,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 		specular2 = pow(saturate(dot(reflection2,input.viewDir)),specPower2);
 	}
 	
-	textureColor = shaderTexture.Sample(SampleType, input.tex);
+	textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
     
     color = saturate(color);
     color = color * textureColor;

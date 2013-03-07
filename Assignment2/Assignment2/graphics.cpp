@@ -124,6 +124,8 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	_light->SetDirection(1.0f, -1.0f, 1.0f);
 	_light->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light->SetSpecularPower(10.0f);
+	_light->SetPosition(-1.0f,1.0f,-1.0f);
+	_light->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 
 
 	_light2 = new Lights;
@@ -311,7 +313,7 @@ bool graphics::Render(float rotation)
 	
 
 	// Present the rendered scene to the screen.
-	_D3D->DrawScene();
+	//_D3D->DrawScene();
 
 	return true;
 }
@@ -319,14 +321,32 @@ bool graphics::Render(float rotation)
 
 void graphics::RenderToTexTure()
 {
+	D3DXMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix,tempA,tempB,tempC;
+
 	_renderTexture->SetRenderTarget(_D3D->GetDevice(),_D3D->GetDepthStencilView());
 
 	_renderTexture->ClearRenderTarget(_D3D->GetDevice(),_D3D->GetDepthStencilView(),0.0f,0.0f,1.0f,1.0f);
 
+	_light->GenerateViewMatrix();
+
+	_model2->RenderToGraphics(_D3D->GetDevice());
+	_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+
+	_model->RenderToGraphics(_D3D->GetDevice());
+
+	D3DXMatrixTranslation(&tempA,0.0f,1.0f,1.0f);
+	D3DXMatrixRotationX(&tempB, 90.0f);
+
+	D3DXMatrixMultiply(&worldMatrix,&tempA,&tempB);
+	D3DXMatrixScaling(&tempC,2.0f,2.0f,2.0f);
+
+	D3DXMatrixMultiply(&worldMatrix,&worldMatrix,&tempC);
+	_depthShader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+
 	RenderScene();
 
 	_D3D->SetBackBufferRenderTarget();
-
+	
 	return;
 
 }
@@ -334,15 +354,21 @@ void graphics::RenderToTexTure()
 void graphics::RenderScene()
 {
 	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix,tempA,tempB,tempC;
+	D3DXMATRIX lightViewMatrix, lightProjectionMatrix;
 	static float rotation = 90.0f;
 
 
 	_camera->Render();
 
+	_light->GenerateViewMatrix();
+
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_camera->GetViewMatrix(viewMatrix);
 	_D3D->GetWorldMatrix(worldMatrix);
 	_D3D->GetProjectionMatrix(projectionMatrix);
+
+	_light->GetViewMatrix(lightViewMatrix);
+	_light->GetProjectionMatrix(lightProjectionMatrix);
 
 	
 	D3DXMatrixRotationX(&worldMatrix, 90.0f);
@@ -351,7 +377,8 @@ void graphics::RenderScene()
 	_model2->RenderToGraphics(_D3D->GetDevice());
 
 	//_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
-	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model2->GetTexture(),
+	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, 
+			       lightProjectionMatrix,_model2->GetTexture(),_renderTexture->GetShaderResourceView(),
 		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
 		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
@@ -368,8 +395,8 @@ void graphics::RenderScene()
 	//_depthShader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 
 	// Render the model using the color shader.
-	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture(),
-		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
+	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,lightViewMatrix, 
+			       lightProjectionMatrix,_model->GetTexture(),_renderTexture->GetShaderResourceView(),_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
 		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
 
 	return;
