@@ -151,8 +151,8 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 	
     
     color = saturate(color);
-    //color = color * textureColor;
-	//color = saturate(color + specular + specular2);
+    color = color * textureColor;
+	color = saturate(color + specular + specular2);
     
 
     return color;

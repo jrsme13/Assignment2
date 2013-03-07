@@ -104,6 +104,7 @@
     <ClInclude Include="userInput.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Depth.fx" />
     <None Include="Shader.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
