@@ -75,7 +75,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 		return false;
 	}
 
-	result = _model2->Initialize(_D3D->GetDevice(),"../Assignment2/sphere.obj",L"../Assignment2/seafloor.dds");
+	result = _model2->Initialize(_D3D->GetDevice(),"../Assignment2/sphere.obj",L"../Assignment2/.dds");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model2 object.", L"Error", MB_OK);
@@ -105,10 +105,10 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	_light->SetAmbient(0.05f, 0.05f, 0.05f, 1.0f);
-	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+	_light->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
 	_light->SetDirection(1.0f, -1.0f, 1.0f);
 	_light->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
-	_light->SetSpecularPower(2.0f);
+	_light->SetSpecularPower(32.0f);
 
 
 	_light2 = new Lights;
@@ -118,7 +118,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	_light2->SetAmbient(0.15f, 0.15f, 0.15f, 1.0f);
-	_light2->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
+	_light2->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light2->SetDirection(-1.0f, -1.0f, 1.0f);
 	_light2->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light2->SetSpecularPower(32.0f);
