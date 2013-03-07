@@ -107,3 +107,29 @@ ID3D10ShaderResourceView* RenderToTexture::GetShaderResourceView()
 
 	return _shaderResourceView;
 }
+
+
+void RenderToTexture::Shutdown()
+{
+	if(_shaderResourceView)
+	{
+		_shaderResourceView->Release();
+		_shaderResourceView = 0;
+	}
+
+	if(_renderTargetView)
+	{
+		_renderTargetView->Release();
+		_renderTargetView = 0;
+	}
+
+	if(_renderTargetTexture)
+	{
+		_renderTargetTexture->Release();
+		_renderTargetTexture = 0;
+	}
+
+	return;
+
+
+}

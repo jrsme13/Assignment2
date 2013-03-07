@@ -8,6 +8,7 @@
 #include "Model.h"
 #include "shader.h"
 #include "Lights.h"
+#include "RenderToTexture.h"
 
 
 //global
@@ -28,6 +29,7 @@ public:
 	bool Intialize(int width,int height,HWND);
 	void Shutdown();
 	bool Frame();
+	bool Render(float);
 
 private:
 
@@ -40,8 +42,10 @@ private:
 	Texture* _texture;
 	Lights *_light;
 	Lights *_light2;
+	RenderToTexture* _renderTexture;
 
-	bool Render(float);
+	void RenderToTexTure();
+	void RenderScene();
 };
 
 

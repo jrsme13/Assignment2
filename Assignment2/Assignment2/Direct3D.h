@@ -33,6 +33,10 @@ public:
 	void GetWorldMatrix(D3DXMATRIX&);
 	void GetOrthoMatrix(D3DXMATRIX&);
 
+	ID3D10DepthStencilView* GetDepthStencilView();
+
+	void SetBackBufferRenderTarget();
+
 private:
 
 	bool _vsync_enabled;

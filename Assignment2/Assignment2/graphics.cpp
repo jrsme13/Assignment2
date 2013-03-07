@@ -11,6 +11,7 @@ graphics::graphics()
 	//_texture = 0;
 	_light = 0;
 	_light2 = 0;
+	_renderTexture = 0;
 	
 }
 
@@ -124,7 +125,19 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	
 
 	// Initialize the light object.
-	
+
+	_renderTexture = new RenderToTexture;
+	if(!_renderTexture)
+	{
+		return false;
+	}
+
+	result = _renderTexture->Initialize(_D3D->GetDevice(),width,height);
+	if(!result)
+	{
+		MessageBox(hwnd, L"Graphics Could not Intialize Render To Texture", L"Error", MB_OK);
+		return false;
+	}
 
 	return true;
 }
@@ -146,6 +159,12 @@ void graphics::Shutdown()
 		_light2 = 0;
 	}
 	
+	if(_renderTexture)
+	{
+		_renderTexture->Shutdown();
+		delete _renderTexture;
+		_renderTexture = 0;
+	}
 
 	// Release the texture shader object.
 	/*if(_texture)
@@ -172,12 +191,12 @@ void graphics::Shutdown()
 		_model = 0;
 	}
 
-	//if(_model2)
-	//{
-	//	_model2->Shutdown();
-	//	delete _model2;
-	//	_model2 = 0;
-	//}
+	if(_model2)
+	{
+		_model2->Shutdown();
+		delete _model2;
+		_model2 = 0;
+	}
 
 	// Release the camera object.
 	if(_camera)
@@ -224,16 +243,78 @@ bool graphics::Frame()
 
 bool graphics::Render(float rotation)
 {
-	// Clear the buffers to begin the scene.
-	//_D3D->SetupScene(255.f,0.f, 0.f, 1.0f);
+	
 
 	D3DXMATRIX viewMatrix, projectionMatrix, worldMatrix,tempA,tempB,tempC, temphold;
 	
-
+	RenderToTexture();
 	// Clear the buffers to begin the scene.
 	_D3D->SetupScene(0.0f, 0.0f, 0.0f, 1.0f);
 
+	RenderScene();
+
+	_D3D->DrawScene();
 	// Generate the view matrix based on the camera's position.
+	//_camera->Render(); now in renderscene
+
+	// Get the world, view, and projection matrices from the camera and d3d objects.
+	/*_camera->GetViewMatrix(viewMatrix);
+	_D3D->GetWorldMatrix(worldMatrix);
+	_D3D->GetProjectionMatrix(projectionMatrix);
+
+	
+	D3DXMatrixRotationX(&worldMatrix, 90.0f);
+	
+
+	_model2->RenderToGraphics(_D3D->GetDevice());
+	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model2->GetTexture(),
+		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
+		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
+	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+	_model->RenderToGraphics(_D3D->GetDevice());
+
+	D3DXMatrixTranslation(&tempA,0.0f,1.0f,1.0f);
+	D3DXMatrixRotationX(&tempB, 90.0f);
+
+	D3DXMatrixMultiply(&worldMatrix,&tempA,&tempB);
+	D3DXMatrixScaling(&tempC,2.0f,2.0f,2.0f);
+
+	D3DXMatrixMultiply(&worldMatrix,&worldMatrix,&tempC);
+
+	// Render the model using the color shader.
+	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,_model->GetTexture(),
+		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
+		,_light2->GetSpecularColor(),_light2->GetSpecularPower());*/
+
+	
+
+	// Present the rendered scene to the screen.
+	_D3D->DrawScene();
+
+	return true;
+}
+
+
+void graphics::RenderToTexTure()
+{
+	_renderTexture->SetRenderTarget(_D3D->GetDevice(),_D3D->GetDepthStencilView());
+
+	_renderTexture->ClearRenderTarget(_D3D->GetDevice(),_D3D->GetDepthStencilView(),0.0f,0.0f,1.0f,1.0f);
+
+	RenderScene();
+
+	_D3D->SetBackBufferRenderTarget();
+
+	return;
+
+}
+
+void graphics::RenderScene()
+{
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix,tempA,tempB,tempC;
+	static float rotation = 90.0f;
+
+
 	_camera->Render();
 
 	// Get the world, view, and projection matrices from the camera and d3d objects.
@@ -265,13 +346,5 @@ bool graphics::Render(float rotation)
 		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
 		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
 
-	
-
-
-	
-
-	// Present the rendered scene to the screen.
-	_D3D->DrawScene();
-
-	return true;
+	return;
 }

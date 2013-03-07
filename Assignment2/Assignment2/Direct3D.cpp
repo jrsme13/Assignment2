@@ -352,3 +352,18 @@ void Direct3D::GetWorldMatrix(D3DXMATRIX& worldMatrix)
 	worldMatrix = _worldMatrix;
 	return;
 }
+
+
+
+ID3D10DepthStencilView* Direct3D::GetDepthStencilView()
+{
+	return _depthStencilView;
+}
+
+void Direct3D::SetBackBufferRenderTarget()
+{
+
+	_device->OMSetRenderTargets(1,&_renderTargetView,_depthStencilView);
+	return;
+
+}
