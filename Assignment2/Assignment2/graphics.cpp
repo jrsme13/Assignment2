@@ -242,7 +242,7 @@ bool graphics::Frame()
 {
 	bool result;
 
-
+	static float lightPositionX = -2.0f;
 	// Render the graphics scene.
 	static float rotation = 0.0f;
 
@@ -253,6 +253,14 @@ bool graphics::Frame()
 	{
 		rotation = -365.0f;
 	}
+
+	lightPositionX += 0.00005f;
+	if(lightPositionX > 2.0f)
+	{
+		lightPositionX = -2.0f;
+	}
+
+	_light->SetPosition(-2.0f,4.0f,lightPositionX);
 
 	// Render the graphics scene.
 	result = Render();
