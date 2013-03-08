@@ -16,8 +16,8 @@
 
 const bool FULL_SCREEN = false;
 const bool VSYNC_ENABLED = true;
-const float SCREEN_DEPTH = 10000.0f;
-const float SCREEN_NEAR = 0.1f;
+const float SCREEN_DEPTH = 100.0f;
+const float SCREEN_NEAR = 0.01f;
 
 const int SHADOWMAP_WIDTH = 1024;
 const int SHADOWMAP_HEIGHT = 1024;
@@ -33,7 +33,7 @@ public:
 	bool Intialize(int width,int height,HWND);
 	void Shutdown();
 	bool Frame();
-	bool Render(float);
+	
 
 private:
 
@@ -49,8 +49,8 @@ private:
 	RenderToTexture* _renderTexture;
 	DepthShader* _depthShader;
 
-	void RenderToTexTure();
-	void RenderScene();
+	bool RenderSceneToTexTure();
+	bool Render();
 };
 
 

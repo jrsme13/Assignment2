@@ -76,7 +76,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 		return false;
 	}
 
-	result = _model2->Initialize(_D3D->GetDevice(),"../Assignment2/sphere.obj",L"../Assignment2/grey.dds");
+	result = _model2->Initialize(_D3D->GetDevice(),"../Assignment2/sphere.obj",L"../Assignment2/stone01.dds");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model2 object.", L"Error", MB_OK);
@@ -119,12 +119,12 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 		return false;
 	}
 
-	_light->SetAmbient(0.05f, 0.05f, 0.05f, 1.0f);
+	_light->SetAmbient(0.15f, 0.15f, 0.3f, 1.0f);
 	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light->SetDirection(1.0f, -1.0f, 1.0f);
 	_light->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light->SetSpecularPower(10.0f);
-	_light->SetPosition(-1.0f,1.0f,-1.0f);
+	_light->SetPosition(2.0f,4.0f,-2.0f);
 	_light->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 
 
@@ -256,7 +256,7 @@ bool graphics::Frame()
 	}
 
 	// Render the graphics scene.
-	result = Render(rotation);
+	result = Render();
 	if(!result)
 	{
 		return false;
@@ -265,70 +265,22 @@ bool graphics::Frame()
 	return true;
 }
 
-bool graphics::Render(float rotation)
+bool graphics::Render()
 {
-	
+	bool result;
 
-	D3DXMATRIX viewMatrix, projectionMatrix, worldMatrix,tempA,tempB,tempC, temphold;
-	
-	RenderToTexture();
-	// Clear the buffers to begin the scene.
-	_D3D->SetupScene(0.0f, 0.0f, 0.0f, 1.0f);
-
-	RenderScene();
-
-	_D3D->DrawScene();
-	
-
-	return true;
-}
-
-
-void graphics::RenderToTexTure()
-{
-	D3DXMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix,tempA,tempB,tempC;
-
-	_renderTexture->SetRenderTarget(_D3D->GetDevice());
-
-	_renderTexture->ClearRenderTarget(_D3D->GetDevice(),0.0f,0.0f,1.0f,1.0f);
-
-	_light->GenerateViewMatrix();
-
-	_D3D->GetWorldMatrix(worldMatrix);
-
-	// Get the view and orthographic matrices from the light object.
-	_light->GetViewMatrix(lightViewMatrix);
-	_light->GetProjectionMatrix(lightProjectionMatrix);
-
-	_model2->RenderToGraphics(_D3D->GetDevice());
-	_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-
-	_model->RenderToGraphics(_D3D->GetDevice());
-
-	D3DXMatrixTranslation(&tempA,0.0f,1.0f,1.0f);
-	D3DXMatrixRotationX(&tempB, 90.0f);
-
-	D3DXMatrixMultiply(&worldMatrix,&tempA,&tempB);
-	D3DXMatrixScaling(&tempC,2.0f,2.0f,2.0f);
-
-	D3DXMatrixMultiply(&worldMatrix,&worldMatrix,&tempC);
-	_depthShader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
-
-	RenderScene();
-
-	_D3D->SetBackBufferRenderTarget();
-	
-	_D3D->ResetViewport();
-
-	return;
-
-}
-
-void graphics::RenderScene()
-{
-	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix,tempA,tempB,tempC;
+	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix,tempA,tempB,tempC,temphold;
 	D3DXMATRIX lightViewMatrix, lightProjectionMatrix;
 	static float rotation = 90.0f;
+	
+	result = RenderSceneToTexTure();
+	if(!result)
+	{
+		return false;
+
+	}
+	// Clear the buffers to begin the scene.
+	_D3D->SetupScene(0.0f, 0.0f, 0.0f, 1.0f);
 
 
 	_camera->Render();
@@ -372,5 +324,104 @@ void graphics::RenderScene()
 			       lightProjectionMatrix,_model->GetTexture(),_renderTexture->GetShaderResourceView(),_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
 		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
 
-	return;
+	
+	
+
+	_D3D->DrawScene();
+	
+
+	return true;
 }
+
+
+bool graphics::RenderSceneToTexTure()
+{
+	D3DXMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix,tempA,tempB,tempC;
+
+	_renderTexture->SetRenderTarget(_D3D->GetDevice());
+
+	_renderTexture->ClearRenderTarget(_D3D->GetDevice(),0.0f,0.0f,1.0f,1.0f);
+
+	_light->GenerateViewMatrix();
+
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	// Get the view and orthographic matrices from the light object.
+	_light->GetViewMatrix(lightViewMatrix);
+	_light->GetProjectionMatrix(lightProjectionMatrix);
+
+	_model2->RenderToGraphics(_D3D->GetDevice());
+	_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+
+	
+
+	D3DXMatrixTranslation(&tempA,0.0f,1.0f,1.0f);
+	D3DXMatrixRotationX(&tempB, 90.0f);
+
+	D3DXMatrixMultiply(&worldMatrix,&tempA,&tempB);
+	D3DXMatrixScaling(&tempC,2.0f,2.0f,2.0f);
+
+	D3DXMatrixMultiply(&worldMatrix,&worldMatrix,&tempC);
+	_model->RenderToGraphics(_D3D->GetDevice());
+	_depthShader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+
+	
+
+	_D3D->SetBackBufferRenderTarget();
+	
+	_D3D->ResetViewport();
+
+	return true;
+
+}
+
+//void graphics::RenderScene()
+//{
+//	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix,tempA,tempB,tempC;
+//	D3DXMATRIX lightViewMatrix, lightProjectionMatrix;
+//	static float rotation = 90.0f;
+//
+//
+//	_camera->Render();
+//
+//	_light->GenerateViewMatrix();
+//
+//	// Get the world, view, and projection matrices from the camera and d3d objects.
+//	_camera->GetViewMatrix(viewMatrix);
+//	_D3D->GetWorldMatrix(worldMatrix);
+//	_D3D->GetProjectionMatrix(projectionMatrix);
+//
+//	_light->GetViewMatrix(lightViewMatrix);
+//	_light->GetProjectionMatrix(lightProjectionMatrix);
+//
+//	
+//	D3DXMatrixRotationX(&worldMatrix, 90.0f);
+//	
+//
+//	_model2->RenderToGraphics(_D3D->GetDevice());
+//
+//	//_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+//	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, 
+//			       lightProjectionMatrix,_model2->GetTexture(),_renderTexture->GetShaderResourceView(),
+//		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
+//		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
+//	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
+//	_model->RenderToGraphics(_D3D->GetDevice());
+//
+//	D3DXMatrixTranslation(&tempA,0.0f,1.0f,1.0f);
+//	D3DXMatrixRotationX(&tempB, 90.0f);
+//
+//	D3DXMatrixMultiply(&worldMatrix,&tempA,&tempB);
+//	D3DXMatrixScaling(&tempC,2.0f,2.0f,2.0f);
+//
+//	D3DXMatrixMultiply(&worldMatrix,&worldMatrix,&tempC);
+//
+//	//_depthShader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+//
+//	// Render the model using the color shader.
+//	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,lightViewMatrix, 
+//			       lightProjectionMatrix,_model->GetTexture(),_renderTexture->GetShaderResourceView(),_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
+//		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
+//
+//	return;
+//}

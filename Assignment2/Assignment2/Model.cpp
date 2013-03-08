@@ -392,7 +392,7 @@ bool Model::LoadModel(char* file)
 			{
 				ifs>>_normalsArray[normalsCount].x>>_normalsArray[normalsCount].y>>_normalsArray[normalsCount].z;
 
-				_normalsArray[normalsCount].z = _normalsArray[normalsCount].z *-1.0f;
+				//_normalsArray[normalsCount].z = _normalsArray[normalsCount].z *-1.0f;
 
 				normalsCount++;
 			}

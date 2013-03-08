@@ -25,7 +25,7 @@ float4 ambient;
 float4 diffuseColor;
 float3 lightPostition;
 
-float3 lightDirection;
+//float3 lightDirection;
 float3 specCol;
 float specPower;
 
@@ -70,7 +70,7 @@ struct PixelInputType
     float4 position : SV_POSITION;
     float2 tex : TEXCOORD0;
 	float3 normal: NORMAL;
-	float3 viewDir: TEXCOORD1;
+	float3 lightPos: TEXCOORD1;
 	float4 lightViewPosition: TEXCOORD2;
 	
 };
@@ -100,6 +100,7 @@ PixelInputType ColorVertexShader(VertexInputType input)
     
 	// Calculate the normal vector against the world matrix only.
     output.normal = mul(input.normal, (float3x3)worldMatrix);
+	output.normal = mul(input.normal, (float3x3)viewMatrix);
 	
     // Normalize the normal vector.
     output.normal = normalize(output.normal);
@@ -107,10 +108,13 @@ PixelInputType ColorVertexShader(VertexInputType input)
 
 	worldPos = mul(input.position, worldMatrix);
 
-	output.viewDir = cameraPos.xyz - worldPos.xyz;
+	output.lightPos = lightPostition.xyz - worldPos.xyz;
+	//output.lightPos = mul(output.lightPos, (float3x3)worldMatrix);
+	//output.lightPos = mul(output.lightPos, (float3x3)lightViewMatrix);
+	
 	
 
-	output.viewDir = normalize(output.viewDir);
+	output.lightPos = normalize(output.lightPos);
 	
 
     return output;
@@ -161,50 +165,51 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 
 		if(lightDepthValue < depthValue)
 		{
-			 lightDir = -lightDirection;
-			 lightIntensity = saturate(dot(input.normal, lightDir));
+			 //lightDir = -lightDirection;
+			 lightIntensity = saturate(dot(input.normal, input.lightPos));
 
 			if (lightIntensity > 0.0f)
 			{
 
 				color +=(diffuseColor * lightIntensity);
-				
+				//color = saturate(color);
 
-				reflection = normalize(2*lightIntensity*input.normal - lightDir);
+				//reflection = normalize(2*lightIntensity*input.normal - lightDir);
 
-				specular = pow(saturate(dot(reflection,input.viewDir)),specPower);
+				//specular = pow(saturate(dot(reflection,input.viewDir)),specPower);
 			}
 		}
 	}
 
-	specular = float4(0.0f,0.0f,0.0f,0.0f);
-	specular2 = float4(0.0f,0.0f,0.0f,0.0f);
+	//specular = float4(0.0f,0.0f,0.0f,0.0f);
+	//specular2 = float4(0.0f,0.0f,0.0f,0.0f);
 	    
     //lightDir = -lightDirection;
-	lightDir2 = -lightDirection2;
+	//lightDir2 = -lightDirection2;
     
     //lightIntensity = saturate(dot(input.normal, lightDir));
-	lightIntensity2 = saturate(dot(input.normal, lightDir2));
+	//lightIntensity2 = saturate(dot(input.normal, lightDir2));
 
 	
 
-		if (lightIntensity2 > 0.0f)
-	{
+		//if (lightIntensity2 > 0.0f)
+	//{
 
 		//color +=(diffuseColor2 * lightIntensity2);
 		//color = saturate(color);
 
-		reflection2 = normalize(2*lightIntensity2*input.normal - lightDir2);
+		//reflection2 = normalize(2*lightIntensity2*input.normal - lightDir2);
 
-		specular2 = pow(saturate(dot(reflection2,input.viewDir)),specPower2);
-	}
+		//specular2 = pow(saturate(dot(reflection2,input.viewDir)),specPower2);
+	//}
 	
 	textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
     
 
-	//color.rgb = input.lightViewPosition.w;
-    color = saturate(color);
+	//color.rgb = lightIntensity;
+    
     color = color * textureColor;
+	
 	//color = saturate(color + specular + specular2);
     
 

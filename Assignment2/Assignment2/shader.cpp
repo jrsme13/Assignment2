@@ -179,7 +179,8 @@ bool shader::InitializeShader(ID3D10Device* device, HWND hwnd,WCHAR* filename)
 
 	_texturePtr = _effect->GetVariableByName("shaderTexture")->AsShaderResource();
 
-	_lightDirPtr = _effect->GetVariableByName("lightDirection")->AsVector();
+	//_lightDirPtr = _effect->GetVariableByName("lightDirection")->AsVector();
+	_lightPosPtr = _effect->GetVariableByName("lightPostition")->AsVector();
 	_diffusePtr = _effect->GetVariableByName("diffuseColor")->AsVector();
 
 	_lightDirPtr2 = _effect->GetVariableByName("lightDirection2")->AsVector();
@@ -283,7 +284,7 @@ void shader::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND hwnd, WCHAR
 
 
 void shader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, D3DXMATRIX projectionMatrix,D3DXMATRIX lightViewMatrix,D3DXMATRIX lightProjectionMatrix,
-	ID3D10ShaderResourceView* texture,ID3D10ShaderResourceView* depthMapTexture,D3DXVECTOR3 lightDir, D3DXVECTOR4 diffused,D3DXVECTOR4 ambient,D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower,
+	ID3D10ShaderResourceView* texture,ID3D10ShaderResourceView* depthMapTexture,D3DXVECTOR3 lightPos, D3DXVECTOR4 diffused,D3DXVECTOR4 ambient,D3DXVECTOR3 cameraPos, D3DXVECTOR4 specularColor, float specularPower,
 	D3DXVECTOR3 lightDir2,D3DXVECTOR4 diffuse2,D3DXVECTOR4 specColor2,float specPower2)
 {
 	// Set the world matrix variable inside the shader.
@@ -298,7 +299,8 @@ void shader::SetShaderParameters(D3DXMATRIX worldMatrix, D3DXMATRIX viewMatrix, 
 	_texturePtr->SetResource(texture);
 	_ambientPtr->SetFloatVector((float*)&ambient);
 
-	_lightDirPtr->SetFloatVector((float*)&lightDir);
+	//_lightDirPtr->SetFloatVector((float*)&lightDir);
+	_lightPosPtr ->SetFloatVector((float*)&lightPos);
 	_diffusePtr->SetFloatVector((float*)&diffused);
 
 	_lightDirPtr2->SetFloatVector((float*)&lightDir2);

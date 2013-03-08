@@ -106,7 +106,7 @@ void Lights::GenerateViewMatrix()
 	up.y = 1.0f;
 	up.z = 0.0f;
 
-	_position = -_direction * 2;
+	//_position = -_direction * 2;
 
 	// Create the view matrix from the three vectors.
 	D3DXMatrixLookAtLH(&_viewMatrix, &_position, &lookAt, &up);
@@ -120,11 +120,12 @@ void Lights::GenerateProjectionMatrix(float screenDepth, float screenNear)
 
 
 	// Setup field of view and screen aspect for a square light source.
-	//fieldOfView = (float)D3DX_PI / 2.0f;
-	//screenAspect = 1.0f;
+	fieldOfView = (float)D3DX_PI / 2.0f;
+	screenAspect = 1.0f;
 
 	// Create the projection matrix for the light.
-	D3DXMatrixOrthoLH(&_projectionMatrix, 30.0f, 30.0f, screenNear, screenDepth);
+	//D3DXMatrixOrthoLH(&_projectionMatrix, 30.0f, 30.0f, screenNear, screenDepth);
+	D3DXMatrixPerspectiveFovLH(&_projectionMatrix, fieldOfView, screenAspect, screenNear, screenDepth);
 
 	return;
 }
