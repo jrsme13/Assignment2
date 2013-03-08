@@ -107,10 +107,11 @@ PixelInputType ColorVertexShader(VertexInputType input)
 
 
 	worldPos = mul(input.position, worldMatrix);
+	worldPos = mul(worldPos,lightViewMatrix);
 
 	output.lightPos = lightPostition.xyz - worldPos.xyz;
-	//output.lightPos = mul(output.lightPos, (float3x3)worldMatrix);
-	//output.lightPos = mul(output.lightPos, (float3x3)lightViewMatrix);
+	output.lightPos = mul(output.lightPos, (float3x3)worldMatrix);
+	//output.lightPos = mul(output.lightPos, (float3x3)viewMatrix);
 	
 	
 
