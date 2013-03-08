@@ -23,6 +23,8 @@ float4 ambient;
 
 //Light1
 float4 diffuseColor;
+float3 lightPostition;
+
 float3 lightDirection;
 float3 specCol;
 float specPower;

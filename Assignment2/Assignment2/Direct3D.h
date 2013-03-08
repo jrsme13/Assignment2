@@ -36,6 +36,7 @@ public:
 	ID3D10DepthStencilView* GetDepthStencilView();
 
 	void SetBackBufferRenderTarget();
+	void ResetViewport();
 
 private:
 
@@ -50,6 +51,7 @@ private:
 	D3DXMATRIX _projectionMatrix;
 	D3DXMATRIX _worldMatrix;
 	D3DXMATRIX _orthoMatrix;
+	D3D10_VIEWPORT _viewport;
 
 };
 

@@ -106,6 +106,8 @@ void Lights::GenerateViewMatrix()
 	up.y = 1.0f;
 	up.z = 0.0f;
 
+	_position = -_direction * 2;
+
 	// Create the view matrix from the three vectors.
 	D3DXMatrixLookAtLH(&_viewMatrix, &_position, &lookAt, &up);
 	

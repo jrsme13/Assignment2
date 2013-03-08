@@ -220,15 +220,15 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
 	// setting the viewport
 
 
-	viewport.Width = screenWidth;
-	viewport.Height = screenHeight;
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	viewport.TopLeftX = 0;
-	viewport.TopLeftY = 0;
+	_viewport.Width = screenWidth;
+    _viewport.Height = screenHeight;
+    _viewport.MinDepth = 0.0f;
+    _viewport.MaxDepth = 1.0f;
+    _viewport.TopLeftX = 0;
+    _viewport.TopLeftY = 0;
 
 	// Create the viewport.
-	_device->RSSetViewports(1, &viewport);
+	_device->RSSetViewports(1, &_viewport);
 
 	//---------------------------------------------------------
 
@@ -366,4 +366,13 @@ void Direct3D::SetBackBufferRenderTarget()
 	_device->OMSetRenderTargets(1,&_renderTargetView,_depthStencilView);
 	return;
 
+}
+
+
+void Direct3D::ResetViewport()
+{
+	// Set the viewport.
+    _device->RSSetViewports(1, &_viewport);
+
+	return;
 }
