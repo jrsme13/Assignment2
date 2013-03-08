@@ -72,6 +72,7 @@ struct PixelInputType
 	float3 normal: NORMAL;
 	float3 lightPos: TEXCOORD1;
 	float4 lightViewPosition: TEXCOORD2;
+	float3 viewDir: TEXCOORD3;
 	
 };
 
@@ -111,7 +112,7 @@ PixelInputType ColorVertexShader(VertexInputType input)
 
 	output.lightPos = lightPostition.xyz - worldPos.xyz;
 	output.lightPos = mul(output.lightPos, (float3x3)worldMatrix);
-	//output.lightPos = mul(output.lightPos, (float3x3)lightViewMatrix);
+	//output.lightPos = mul(output.lightPos, (float3x3)viewMatrix);
 
 	output.lightPos.z = output.lightPos.z * -1.0f;
 	//output.lightPos.x = output.lightPos.x * -1.0f;
@@ -119,6 +120,11 @@ PixelInputType ColorVertexShader(VertexInputType input)
 	
 
 	output.lightPos = normalize(output.lightPos);
+
+	output.viewDir = cameraPos.xyz - worldPos.xyz;
+	
+    
+    output.viewDir = normalize(output.viewDir);
 	
 
     return output;
@@ -158,6 +164,9 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 	
 	color = ambient;
 
+
+	specular = float4(0.0f,0.0f,0.0f,0.0f);
+
 	orthoTexCoord.x = input.lightViewPosition.x / input.lightViewPosition.w / 2.0f + 0.5f;
     orthoTexCoord.y = -input.lightViewPosition.y / input.lightViewPosition.w / 2.0f + 0.5f;
 
@@ -180,7 +189,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 
 				reflection = normalize(2*lightIntensity*input.normal - lightDir);
 
-				specular = pow(saturate(dot(reflection,input.lightPos)),specPower);
+				specular = pow(saturate(dot(reflection,input.viewDir)),specPower);
 			}
 		}
 	}
@@ -211,10 +220,13 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
     
 
 	//color.rgb = lightIntensity;
+	color = saturate(color);
     
     color = color * textureColor;
 	
 	color = saturate(color + specular);
+
+	//color.rgb = input.normal;
     
 
     return color;

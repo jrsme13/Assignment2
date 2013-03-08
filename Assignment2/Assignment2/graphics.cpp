@@ -121,10 +121,9 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 
 	_light->SetAmbient(0.15f, 0.15f, 0.3f, 1.0f);
 	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_light->SetDirection(1.0f, -1.0f, 1.0f);
 	_light->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light->SetSpecularPower(32.0f);
-	_light->SetPosition(-2.0f,4.0f,-2.0f);
+	_light->SetPosition(-2.0f,4.0f,2.0f);
 	_light->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 
 
@@ -296,7 +295,7 @@ bool graphics::Render()
 	_light->GetProjectionMatrix(lightProjectionMatrix);
 
 	
-	D3DXMatrixRotationX(&worldMatrix, 90.0f);
+	//D3DXMatrixRotationX(&worldMatrix, 90.0f);
 	
 
 	_model2->RenderToGraphics(_D3D->GetDevice());
@@ -304,7 +303,7 @@ bool graphics::Render()
 	//_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, 
 			       lightProjectionMatrix,_model2->GetTexture(),_renderTexture->GetShaderResourceView(),
-		_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
+				   _light->GetPosition(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
 		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_model->RenderToGraphics(_D3D->GetDevice());
@@ -321,7 +320,7 @@ bool graphics::Render()
 
 	// Render the model using the color shader.
 	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,lightViewMatrix, 
-			       lightProjectionMatrix,_model->GetTexture(),_renderTexture->GetShaderResourceView(),_light->GetDirection(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
+		lightProjectionMatrix,_model->GetTexture(),_renderTexture->GetShaderResourceView(),_light->GetPosition(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
 		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
 
 	
@@ -355,7 +354,7 @@ bool graphics::RenderSceneToTexTure()
 
 	
 
-	D3DXMatrixTranslation(&tempA,0.0f,1.0f,1.0f);
+	D3DXMatrixTranslation(&tempA,0.0f,1.0f,0.5f);
 	D3DXMatrixRotationX(&tempB, 90.0f);
 
 	D3DXMatrixMultiply(&worldMatrix,&tempA,&tempB);
