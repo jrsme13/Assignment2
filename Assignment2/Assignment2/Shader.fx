@@ -189,7 +189,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 		if (lightIntensity2 > 0.0f)
 	{
 
-		color +=(diffuseColor2 * lightIntensity2);
+		//color +=(diffuseColor2 * lightIntensity2);
 		//color = saturate(color);
 
 		reflection2 = normalize(2*lightIntensity2*input.normal - lightDir2);
@@ -199,9 +199,11 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 	
 	textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
     
-    color = saturate(color);
-    color = color * textureColor;
-	color = saturate(color + specular + specular2);
+
+	color.rgb = input.lightViewPosition.w;
+    //color = saturate(color);
+    //color = color * textureColor;
+	//color = saturate(color + specular + specular2);
     
 
     return color;

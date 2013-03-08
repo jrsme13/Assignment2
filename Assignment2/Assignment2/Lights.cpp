@@ -97,7 +97,9 @@ void Lights::GenerateViewMatrix()
 	D3DXVECTOR3 up;
 	D3DXVECTOR3 lookAt;
 
-	lookAt = _direction;
+	lookAt.x =	 0.0f;
+	lookAt.y =	 0.0f;
+	lookAt.z =	 0.0f;
 
 	// Setup the vector that points upwards.
 	up.x = 0.0f;
@@ -120,7 +122,7 @@ void Lights::GenerateProjectionMatrix(float screenDepth, float screenNear)
 	//screenAspect = 1.0f;
 
 	// Create the projection matrix for the light.
-	D3DXMatrixOrthoLH(&_projectionMatrix, 1024.0f, 1024.0f, screenNear, screenDepth);
+	D3DXMatrixOrthoLH(&_projectionMatrix, 10.0f, 10.0f, screenNear, screenDepth);
 
 	return;
 }

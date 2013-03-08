@@ -120,7 +120,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	}
 
 	_light->SetAmbient(0.05f, 0.05f, 0.05f, 1.0f);
-	_light->SetDiffuseColor(0.0f, 0.0f, 1.0f, 1.0f);
+	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light->SetDirection(1.0f, -1.0f, 1.0f);
 	_light->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light->SetSpecularPower(10.0f);
