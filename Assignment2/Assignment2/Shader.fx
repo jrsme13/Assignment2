@@ -107,12 +107,15 @@ PixelInputType ColorVertexShader(VertexInputType input)
 
 
 	worldPos = mul(input.position, worldMatrix);
-	worldPos = mul(worldPos,lightViewMatrix);
+	//worldPos = mul(worldPos,lightViewMatrix);
 
 	output.lightPos = lightPostition.xyz - worldPos.xyz;
 	output.lightPos = mul(output.lightPos, (float3x3)worldMatrix);
-	//output.lightPos = mul(output.lightPos, (float3x3)viewMatrix);
-	
+	//output.lightPos = mul(output.lightPos, (float3x3)lightViewMatrix);
+
+	output.lightPos.z = output.lightPos.z * -1.0f;
+	//output.lightPos.x = output.lightPos.x * -1.0f;
+	//output.lightPos.y = output.lightPos.y * -1.0f;
 	
 
 	output.lightPos = normalize(output.lightPos);
@@ -166,18 +169,18 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 
 		if(lightDepthValue < depthValue)
 		{
-			 //lightDir = -lightDirection;
+			 lightDir = -input.lightPos;
 			 lightIntensity = saturate(dot(input.normal, input.lightPos));
 
 			if (lightIntensity > 0.0f)
 			{
 
 				color +=(diffuseColor * lightIntensity);
-				//color = saturate(color);
+				color = saturate(color);
 
-				//reflection = normalize(2*lightIntensity*input.normal - lightDir);
+				reflection = normalize(2*lightIntensity*input.normal - lightDir);
 
-				//specular = pow(saturate(dot(reflection,input.viewDir)),specPower);
+				specular = pow(saturate(dot(reflection,input.lightPos)),specPower);
 			}
 		}
 	}
@@ -211,7 +214,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
     
     color = color * textureColor;
 	
-	//color = saturate(color + specular + specular2);
+	color = saturate(color + specular);
     
 
     return color;

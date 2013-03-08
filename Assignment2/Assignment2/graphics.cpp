@@ -123,8 +123,8 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light->SetDirection(1.0f, -1.0f, 1.0f);
 	_light->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
-	_light->SetSpecularPower(10.0f);
-	_light->SetPosition(2.0f,4.0f,-2.0f);
+	_light->SetSpecularPower(32.0f);
+	_light->SetPosition(-2.0f,4.0f,-2.0f);
 	_light->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 
 
