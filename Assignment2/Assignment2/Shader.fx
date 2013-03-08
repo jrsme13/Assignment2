@@ -200,9 +200,9 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 	textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
     
 
-	color.rgb = input.lightViewPosition.w;
-    //color = saturate(color);
-    //color = color * textureColor;
+	//color.rgb = input.lightViewPosition.w;
+    color = saturate(color);
+    color = color * textureColor;
 	//color = saturate(color + specular + specular2);
     
 

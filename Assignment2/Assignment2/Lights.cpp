@@ -122,7 +122,7 @@ void Lights::GenerateProjectionMatrix(float screenDepth, float screenNear)
 	//screenAspect = 1.0f;
 
 	// Create the projection matrix for the light.
-	D3DXMatrixOrthoLH(&_projectionMatrix, 10.0f, 10.0f, screenNear, screenDepth);
+	D3DXMatrixOrthoLH(&_projectionMatrix, 30.0f, 30.0f, screenNear, screenDepth);
 
 	return;
 }
