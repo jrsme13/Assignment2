@@ -132,7 +132,8 @@ PixelInputType ColorVertexShader(VertexInputType input)
 	output.lightPos2 = normalize(output.lightPos2);
 
 	output.viewDir = cameraPos.xyz - worldPos.xyz;
-	
+	output.viewDir = mul(output.viewDir, (float3x3)worldMatrix);
+	output.viewDir = mul(output.viewDir, (float3x3)viewMatrix);
     
     output.viewDir = normalize(output.viewDir);
 	
