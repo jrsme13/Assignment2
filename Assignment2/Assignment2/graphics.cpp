@@ -13,6 +13,7 @@ graphics::graphics()
 	_light2 = 0;
 	_renderTexture = 0;
 	_depthShader = 0;
+	_renderTexture2 = 0;
 	
 }
 
@@ -135,9 +136,10 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 
 	_light2->SetAmbient(0.15f, 0.15f, 0.15f, 1.0f);
 	_light2->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
-	_light2->SetDirection(-1.0f, -1.0f, 1.0f);
 	_light2->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
-	_light2->SetSpecularPower(10.0f);
+	_light2->SetSpecularPower(32.0f);
+	_light2->SetPosition(2.0f,4.0f,2.0f);
+	_light2->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 	
 
 	// Initialize the light object.
@@ -155,6 +157,20 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 		return false;
 	}
 
+	_renderTexture2 = new RenderToTexture;
+	if(!_renderTexture2)
+	{
+		return false;
+	}
+
+	// Initialize the second render to texture object.
+	result = _renderTexture2->Initialize(_D3D->GetDevice(), SHADOWMAP_WIDTH, SHADOWMAP_HEIGHT, SCREEN_DEPTH, SCREEN_NEAR);
+	if(!result)
+	{
+		MessageBox(hwnd, L"Could not initialize the second render to texture object.", L"Error", MB_OK);
+		return false;
+	}
+
 	return true;
 }
 
@@ -163,6 +179,14 @@ void graphics::Shutdown()
 
 
 	// Release the light object.
+	if(_renderTexture2)
+	{
+		_renderTexture2->Shutdown();
+		delete _renderTexture2;
+		_renderTexture2 = 0;
+	}
+
+
 	if(_light)
 	{
 		delete _light;
@@ -278,6 +302,7 @@ bool graphics::Render()
 
 	D3DXMATRIX worldMatrix, viewMatrix, projectionMatrix,tempA,tempB,tempC,temphold;
 	D3DXMATRIX lightViewMatrix, lightProjectionMatrix;
+	D3DXMATRIX lightViewMatrix2, lightProjectionMatrix2;
 	static float rotation = 90.0f;
 	
 	result = RenderSceneToTexTure();
@@ -286,6 +311,12 @@ bool graphics::Render()
 		return false;
 
 	}
+
+	result = RenderSceneToTexTure2();
+	if(!result)
+	{
+		return false;
+	}
 	// Clear the buffers to begin the scene.
 	_D3D->SetupScene(0.0f, 0.0f, 0.0f, 1.0f);
 
@@ -293,7 +324,7 @@ bool graphics::Render()
 	_camera->Render();
 
 	_light->GenerateViewMatrix();
-
+	_light2->GenerateViewMatrix();
 	// Get the world, view, and projection matrices from the camera and d3d objects.
 	_camera->GetViewMatrix(viewMatrix);
 	_D3D->GetWorldMatrix(worldMatrix);
@@ -303,6 +334,9 @@ bool graphics::Render()
 	_light->GetProjectionMatrix(lightProjectionMatrix);
 
 	
+	_light2->GetViewMatrix(lightViewMatrix2);
+	_light2->GetProjectionMatrix(lightProjectionMatrix2);
+
 	//D3DXMatrixRotationX(&worldMatrix, 90.0f);
 	
 
@@ -311,8 +345,8 @@ bool graphics::Render()
 	//_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
 	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, 
 			       lightProjectionMatrix,_model2->GetTexture(),_renderTexture->GetShaderResourceView(),
-				   _light->GetPosition(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
-		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
+				   _light->GetPosition(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetPosition(),_light2->GetDiffuseColor()
+				   ,_light2->GetSpecularColor(),_light2->GetSpecularPower(),lightViewMatrix2, lightProjectionMatrix2,_renderTexture2->GetShaderResourceView());
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_model->RenderToGraphics(_D3D->GetDevice());
 
@@ -328,8 +362,8 @@ bool graphics::Render()
 
 	// Render the model using the color shader.
 	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,lightViewMatrix, 
-		lightProjectionMatrix,_model->GetTexture(),_renderTexture->GetShaderResourceView(),_light->GetPosition(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetDirection(),_light2->GetDiffuseColor()
-		,_light2->GetSpecularColor(),_light2->GetSpecularPower());
+		lightProjectionMatrix,_model->GetTexture(),_renderTexture->GetShaderResourceView(),_light->GetPosition(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetPosition(),_light2->GetDiffuseColor()
+		,_light2->GetSpecularColor(),_light2->GetSpecularPower(),lightViewMatrix2, lightProjectionMatrix2,_renderTexture2->GetShaderResourceView());
 
 	
 	
@@ -381,6 +415,57 @@ bool graphics::RenderSceneToTexTure()
 	return true;
 
 }
+
+bool graphics::RenderSceneToTexTure2()
+{
+	D3DXMATRIX worldMatrix, lightViewMatrix, lightProjectionMatrix, translateMatrix,tempA,tempB,tempC;
+	float posX, posY, posZ;
+
+
+	// Set the render target to be the render to texture.
+	_renderTexture2->SetRenderTarget(_D3D->GetDevice());
+
+	// Clear the render to texture.
+	_renderTexture2->ClearRenderTarget(_D3D->GetDevice(), 0.0f, 0.0f, 0.0f, 1.0f);
+
+	// Generate the light view matrix based on the light's position.
+	_light2->GenerateViewMatrix();
+
+	// Get the world matrix from the d3d object.
+	_D3D->GetWorldMatrix(worldMatrix);
+
+	// Get the view and orthographic matrices from the light object.
+	_light2->GetViewMatrix(lightViewMatrix);
+	_light2->GetProjectionMatrix(lightProjectionMatrix);
+
+	// Setup the translation matrix for the cube model.
+	_model2->RenderToGraphics(_D3D->GetDevice());
+	_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+
+	
+
+	D3DXMatrixTranslation(&tempA,0.0f,1.0f,0.5f);
+	D3DXMatrixRotationX(&tempB, 90.0f);
+
+	D3DXMatrixMultiply(&worldMatrix,&tempA,&tempB);
+	D3DXMatrixScaling(&tempC,2.0f,2.0f,2.0f);
+
+	D3DXMatrixMultiply(&worldMatrix,&worldMatrix,&tempC);
+	_model->RenderToGraphics(_D3D->GetDevice());
+	_depthShader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
+
+	// Render the cube model with the depth shader.
+	
+
+	// Reset the render target back to the original back buffer and not the render to texture anymore.
+	_D3D->SetBackBufferRenderTarget();
+
+	// Reset the viewport back to the original.
+	_D3D->ResetViewport();
+
+	return true;
+}
+
 
 //void graphics::RenderScene()
 //{

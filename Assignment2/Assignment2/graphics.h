@@ -47,9 +47,11 @@ private:
 	Lights *_light;
 	Lights *_light2;
 	RenderToTexture* _renderTexture;
+	RenderToTexture* _renderTexture2;
 	DepthShader* _depthShader;
 
 	bool RenderSceneToTexTure();
+	bool RenderSceneToTexTure2();
 	bool Render();
 };
 

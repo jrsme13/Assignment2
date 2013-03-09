@@ -12,10 +12,13 @@ matrix projectionMatrix;
 
 Texture2D shaderTexture;
 Texture2D depthMapTexture;
-
+Texture2D depthMapTexture2;
 
 matrix lightViewMatrix;
 matrix lightOrthoMatrix;
+
+matrix lightViewMatrix2;
+matrix lightProjectionMatrix2;
 
 
 float3 cameraPos;
@@ -24,14 +27,12 @@ float4 ambient;
 //Light1
 float4 diffuseColor;
 float3 lightPostition;
-
-//float3 lightDirection;
 float3 specCol;
 float specPower;
 
 //light 2
 float4 diffuseColor2;
-float3 lightDirection2;
+float3 lightPosition2;
 float3 specCol2;
 float specPower2;
 
@@ -73,6 +74,8 @@ struct PixelInputType
 	float3 lightPos: TEXCOORD1;
 	float4 lightViewPosition: TEXCOORD2;
 	float3 viewDir: TEXCOORD3;
+	float3 lightPos2: TEXCOORD4;
+	float4 lightViewPosition2: TEXCOORD5;
 	
 };
 
@@ -96,6 +99,10 @@ PixelInputType ColorVertexShader(VertexInputType input)
 	output.lightViewPosition = mul(output.lightViewPosition, lightViewMatrix);
     output.lightViewPosition = mul(output.lightViewPosition, lightOrthoMatrix);
     
+	output.lightViewPosition2 = mul(input.position, worldMatrix);
+	output.lightViewPosition2 = mul(output.lightViewPosition2, lightViewMatrix2);
+	output.lightViewPosition2 = mul(output.lightViewPosition2, lightProjectionMatrix2);
+
     // Store the input color for the pixel shader to use.
     output.tex = input.tex;
     
@@ -115,11 +122,14 @@ PixelInputType ColorVertexShader(VertexInputType input)
 	//output.lightPos = mul(output.lightPos, (float3x3)viewMatrix);
 
 	output.lightPos.z = output.lightPos.z * -1.0f;
-	//output.lightPos.x = output.lightPos.x * -1.0f;
-	//output.lightPos.y = output.lightPos.y * -1.0f;
-	
-
 	output.lightPos = normalize(output.lightPos);
+
+	output.lightPos2 = lightPosition2.xyz - worldPos.xyz;
+	output.lightPos2 = mul(output.lightPos2, (float3x3)worldMatrix);
+	output.lightPos2.z = output.lightPos2.z * -1.0f;
+
+
+	output.lightPos2 = normalize(output.lightPos2);
 
 	output.viewDir = cameraPos.xyz - worldPos.xyz;
 	
@@ -195,7 +205,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 	}
 
 	//specular = float4(0.0f,0.0f,0.0f,0.0f);
-	//specular2 = float4(0.0f,0.0f,0.0f,0.0f);
+	specular2 = float4(0.0f,0.0f,0.0f,0.0f);
 	    
     //lightDir = -lightDirection;
 	//lightDir2 = -lightDirection2;
@@ -205,26 +215,40 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 
 	
 
-		//if (lightIntensity2 > 0.0f)
-	//{
+	orthoTexCoord.x =  input.lightViewPosition2.x / input.lightViewPosition2.w / 2.0f + 0.5f;
+    orthoTexCoord.y = -input.lightViewPosition2.y / input.lightViewPosition2.w / 2.0f + 0.5f;
 
-		//color +=(diffuseColor2 * lightIntensity2);
-		//color = saturate(color);
+    if((saturate(orthoTexCoord.x) == orthoTexCoord.x) && (saturate(orthoTexCoord.y) == orthoTexCoord.y))
+    {
+        depthValue = depthMapTexture2.Sample(SampleTypeClamp, orthoTexCoord).r;
 
-		//reflection2 = normalize(2*lightIntensity2*input.normal - lightDir2);
+        lightDepthValue = input.lightViewPosition2.z / input.lightViewPosition2.w;
+        lightDepthValue = lightDepthValue - bias;
 
-		//specular2 = pow(saturate(dot(reflection2,input.viewDir)),specPower2);
-	//}
-	
-	textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
-    
+        if(lightDepthValue < depthValue)
+        {
+			lightDir = -input.lightPos2;
+            lightIntensity = saturate(dot(input.normal, input.lightPos2));
+            if(lightIntensity > 0.0f)
+            {
+                color += (diffuseColor2 * lightIntensity);
+
+				color = saturate(color);
+
+				reflection2 = normalize(2*lightIntensity*input.normal - lightDir);
+
+				specular2 = pow(saturate(dot(reflection2,input.viewDir)),specPower2);
+            }
+        }
+    }
+    textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
 
 	//color.rgb = lightIntensity;
 	color = saturate(color);
     
     color = color * textureColor;
 	
-	color = saturate(color + specular);
+	color = saturate(color + specular + specular2);
 
 	//color.rgb = input.normal;
     

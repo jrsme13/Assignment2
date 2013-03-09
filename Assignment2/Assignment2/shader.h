@@ -23,7 +23,7 @@ public:
 	void Shutdown();
 	void Render(ID3D10Device*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX,ID3D10ShaderResourceView*
 		,ID3D10ShaderResourceView*,D3DXVECTOR3,D3DXVECTOR4, D3DXVECTOR4, D3DXVECTOR3,D3DXVECTOR4, float,D3DXVECTOR3,
-		D3DXVECTOR4,D3DXVECTOR4,float);
+		D3DXVECTOR4,D3DXVECTOR4,float,D3DXMATRIX, D3DXMATRIX, ID3D10ShaderResourceView*);
 
 
 private:
@@ -58,13 +58,18 @@ private:
 	ID3D10EffectMatrixVariable* _lightProjectionMatrixPtr;
 	ID3D10EffectShaderResourceVariable* _depthMapTexturePtr;
 
+	ID3D10EffectMatrixVariable* _lightViewMatrixPtr2;
+	ID3D10EffectMatrixVariable* _lightProjectionMatrixPtr2;
+	ID3D10EffectShaderResourceVariable* _depthMapTexturePtr2;
+	ID3D10EffectVectorVariable* _lightPositionPtr2;
+
 	bool InitializeShader(ID3D10Device*, HWND, WCHAR*);
 	void ShutdownShader();
 	void OutputShaderErrorMessage(ID3D10Blob*, HWND, WCHAR*);
 
 	void SetShaderParameters(D3DXMATRIX, D3DXMATRIX, D3DXMATRIX,D3DXMATRIX, D3DXMATRIX,ID3D10ShaderResourceView*,ID3D10ShaderResourceView*,D3DXVECTOR3,
 		D3DXVECTOR4,D3DXVECTOR4,D3DXVECTOR3,D3DXVECTOR4, float,D3DXVECTOR3,
-		D3DXVECTOR4,D3DXVECTOR4,float);
+		D3DXVECTOR4,D3DXVECTOR4,float,D3DXMATRIX, D3DXMATRIX, ID3D10ShaderResourceView*);
 	void RenderShader(ID3D10Device*, int);
 };
 
