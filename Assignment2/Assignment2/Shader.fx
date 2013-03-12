@@ -167,7 +167,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
     
 
 	
-	bias = 0.001f;
+	bias = 0.0006f;
 	
     
 
