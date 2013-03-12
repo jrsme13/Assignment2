@@ -194,7 +194,8 @@ bool Direct3D::intialize(int screenWidth, int screenHeight,bool vsync, HWND hwnd
 	//setting up rater bit for deciding which polygons to be drawn
 
 	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D10_CULL_BACK;
+	//rasterDesc.CullMode = D3D10_CULL_BACK;
+	rasterDesc.CullMode = D3D10_CULL_NONE;
 	rasterDesc.DepthBias = 0;
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;

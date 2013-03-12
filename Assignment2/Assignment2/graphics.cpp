@@ -138,7 +138,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	_light2->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light2->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light2->SetSpecularPower(32.0f);
-	_light2->SetPosition(2.0f,4.0f,-2.0f);
+	_light2->SetPosition(2.0f,3.0f,-2.0f);
 	_light2->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 	
 
@@ -267,6 +267,7 @@ bool graphics::Frame()
 	bool result;
 
 	static float lightPositionX = -2.0f;
+	
 	// Render the graphics scene.
 	static float rotation = 0.0f;
 
@@ -278,8 +279,10 @@ bool graphics::Frame()
 		rotation = -365.0f;
 	}
 
+
+
 	lightPositionX += 0.00005f;
-	if(lightPositionX > 2.0f)
+	if(lightPositionX > -0.5f)
 	{
 		lightPositionX = -2.0f;
 	}

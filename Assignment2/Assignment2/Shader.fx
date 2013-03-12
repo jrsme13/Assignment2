@@ -108,7 +108,7 @@ PixelInputType ColorVertexShader(VertexInputType input)
     
 	// Calculate the normal vector against the world matrix only.
     output.normal = mul(input.normal, (float3x3)worldMatrix);
-	output.normal = mul(input.normal, (float3x3)viewMatrix);
+	//output.normal = mul(input.normal, (float3x3)viewMatrix);
 	
     // Normalize the normal vector.
     output.normal = normalize(output.normal);
@@ -118,22 +118,22 @@ PixelInputType ColorVertexShader(VertexInputType input)
 	//worldPos = mul(worldPos,lightViewMatrix);
 
 	output.lightPos = lightPostition.xyz - worldPos.xyz;
-	output.lightPos = mul(output.lightPos, (float3x3)worldMatrix);
+	//output.lightPos = mul(output.lightPos, (float3x3)worldMatrix);
 	//output.lightPos = mul(output.lightPos, (float3x3)viewMatrix);
 
-	output.lightPos.z = output.lightPos.z * -1.0f;
+	//output.lightPos.z = output.lightPos.z * -1.0f;
 	output.lightPos = normalize(output.lightPos);
 
 	output.lightPos2 = lightPosition2.xyz - worldPos.xyz;
-	output.lightPos2 = mul(output.lightPos2, (float3x3)worldMatrix);
-	output.lightPos2.z = output.lightPos2.z * -1.0f;
+	//output.lightPos2 = mul(output.lightPos2, (float3x3)worldMatrix);
+	//output.lightPos2.z = output.lightPos2.z * -1.0f;
 
 
 	output.lightPos2 = normalize(output.lightPos2);
 
 	output.viewDir = cameraPos.xyz - worldPos.xyz;
-	output.viewDir = mul(output.viewDir, (float3x3)worldMatrix);
-	output.viewDir = mul(output.viewDir, (float3x3)viewMatrix);
+	//output.viewDir = mul(output.viewDir, (float3x3)worldMatrix);
+	//output.viewDir = mul(output.viewDir, (float3x3)viewMatrix);
     
     output.viewDir = normalize(output.viewDir);
 	
@@ -196,7 +196,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 			{
 
 				color +=(diffuseColor * lightIntensity);
-				color = saturate(color);
+				//color = saturate(color);
 
 				reflection = normalize(2*lightIntensity*input.normal - lightDir);
 
@@ -228,15 +228,15 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 
         if(lightDepthValue < depthValue)
         {
-			lightDir = -input.lightPos2;
-            lightIntensity = saturate(dot(input.normal, input.lightPos2));
-            if(lightIntensity > 0.0f)
+			lightDir2 = -input.lightPos2;
+            lightIntensity2 = saturate(dot(input.normal, input.lightPos2));
+            if(lightIntensity2 > 0.0f)
             {
-                color += (diffuseColor2 * lightIntensity);
+                color += (diffuseColor2 * lightIntensity2);
 
-				color = saturate(color);
+				//color = saturate(color);
 
-				reflection2 = normalize(2*lightIntensity*input.normal - lightDir);
+				reflection2 = normalize(2*lightIntensity2*input.normal - lightDir2);
 
 				specular2 = pow(saturate(dot(reflection2,input.viewDir)),specPower2);
             }
