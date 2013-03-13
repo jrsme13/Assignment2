@@ -13,12 +13,16 @@ matrix projectionMatrix;
 Texture2D shaderTexture;
 Texture2D depthMapTexture;
 Texture2D depthMapTexture2;
+Texture2D depthMapTexture3;
 
 matrix lightViewMatrix;
 matrix lightOrthoMatrix;
 
 matrix lightViewMatrix2;
 matrix lightProjectionMatrix2;
+
+matrix lightViewMatrix3;
+matrix lightProjectionMatrix3;
 
 
 float3 cameraPos;
@@ -36,7 +40,10 @@ float3 lightPosition2;
 float3 specCol2;
 float specPower2;
 
-
+float4 diffuseColor3;
+float3 lightPosition3;
+float3 specCol3;
+float specPower3;
 
 
 
@@ -76,6 +83,8 @@ struct PixelInputType
 	float3 viewDir: TEXCOORD3;
 	float3 lightPos2: TEXCOORD4;
 	float4 lightViewPosition2: TEXCOORD5;
+	float3 lightPos3: TEXCOORD6;
+	float4 lightViewPosition3: TEXCOORD7;
 	
 };
 
@@ -103,38 +112,34 @@ PixelInputType ColorVertexShader(VertexInputType input)
 	output.lightViewPosition2 = mul(output.lightViewPosition2, lightViewMatrix2);
 	output.lightViewPosition2 = mul(output.lightViewPosition2, lightProjectionMatrix2);
 
+	output.lightViewPosition3 = mul(input.position, worldMatrix);
+	output.lightViewPosition3 = mul(output.lightViewPosition3, lightViewMatrix3);
+	output.lightViewPosition3 = mul(output.lightViewPosition3, lightProjectionMatrix3);
+
     // Store the input color for the pixel shader to use.
     output.tex = input.tex;
     
 	// Calculate the normal vector against the world matrix only.
     output.normal = mul(input.normal, (float3x3)worldMatrix);
-	//output.normal = mul(input.normal, (float3x3)viewMatrix);
+	
 	
     // Normalize the normal vector.
     output.normal = normalize(output.normal);
 
 
 	worldPos = mul(input.position, worldMatrix);
-	//worldPos = mul(worldPos,lightViewMatrix);
+	
 
 	output.lightPos = lightPostition.xyz - worldPos.xyz;
-	//output.lightPos = mul(output.lightPos, (float3x3)worldMatrix);
-	//output.lightPos = mul(output.lightPos, (float3x3)viewMatrix);
-
-	//output.lightPos.z = output.lightPos.z * -1.0f;
 	output.lightPos = normalize(output.lightPos);
 
 	output.lightPos2 = lightPosition2.xyz - worldPos.xyz;
-	//output.lightPos2 = mul(output.lightPos2, (float3x3)worldMatrix);
-	//output.lightPos2.z = output.lightPos2.z * -1.0f;
-
-
 	output.lightPos2 = normalize(output.lightPos2);
 
+	output.lightPos3 = lightPosition3.xyz - worldPos.xyz;
+	output.lightPos3 = normalize(output.lightPos3);
+
 	output.viewDir = cameraPos.xyz - worldPos.xyz;
-	//output.viewDir = mul(output.viewDir, (float3x3)worldMatrix);
-	//output.viewDir = mul(output.viewDir, (float3x3)viewMatrix);
-    
     output.viewDir = normalize(output.viewDir);
 	
 
@@ -149,16 +154,20 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
     float4 textureColor;
 	float3 lightDir;
 	float3 lightDir2;
+	float3 lightDir3;
 
     float lightIntensity;
 	float lightIntensity2;
+	float lightIntensity3;
 
     float4 color;
 	float3 reflection;
 	float3 reflection2;
+	float3 reflection3;
 
 	float4 specular;
 	float4 specular2;
+	float4 specular3;
 
 	float bias;
 	float2 orthoTexCoord;
@@ -167,7 +176,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
     
 
 	
-	bias = 0.0006f;
+	bias = 0.0005f;
 	
     
 
@@ -197,7 +206,6 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 
 				color +=(diffuseColor * lightIntensity);
 				//color = saturate(color);
-
 				reflection = normalize(2*lightIntensity*input.normal - lightDir);
 
 				specular = pow(saturate(dot(reflection,input.viewDir)),specPower);
@@ -205,17 +213,8 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 		}
 	}
 
-	//specular = float4(0.0f,0.0f,0.0f,0.0f);
 	specular2 = float4(0.0f,0.0f,0.0f,0.0f);
 	    
-    //lightDir = -lightDirection;
-	//lightDir2 = -lightDirection2;
-    
-    //lightIntensity = saturate(dot(input.normal, lightDir));
-	//lightIntensity2 = saturate(dot(input.normal, lightDir2));
-
-	
-
 	orthoTexCoord.x =  input.lightViewPosition2.x / input.lightViewPosition2.w / 2.0f + 0.5f;
     orthoTexCoord.y = -input.lightViewPosition2.y / input.lightViewPosition2.w / 2.0f + 0.5f;
 
@@ -233,26 +232,50 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
             if(lightIntensity2 > 0.0f)
             {
                 color += (diffuseColor2 * lightIntensity2);
-
-				//color = saturate(color);
-
+				color = saturate(color);
 				reflection2 = normalize(2*lightIntensity2*input.normal - lightDir2);
 
 				specular2 = pow(saturate(dot(reflection2,input.viewDir)),specPower2);
             }
         }
     }
+
+	specular3 = float4(0.0f,0.0f,0.0f,0.0f);
+	    
+	orthoTexCoord.x =  input.lightViewPosition3.x / input.lightViewPosition3.w / 2.0f + 0.5f;
+    orthoTexCoord.y = -input.lightViewPosition3.y / input.lightViewPosition3.w / 2.0f + 0.5f;
+
+    if((saturate(orthoTexCoord.x) == orthoTexCoord.x) && (saturate(orthoTexCoord.y) == orthoTexCoord.y))
+    {
+        depthValue = depthMapTexture3.Sample(SampleTypeClamp, orthoTexCoord).r;
+
+        lightDepthValue = input.lightViewPosition3.z / input.lightViewPosition3.w;
+        lightDepthValue = lightDepthValue - bias;
+
+        if(lightDepthValue < depthValue)
+        {
+			lightDir3 = -input.lightPos3;
+            lightIntensity3 = saturate(dot(input.normal, input.lightPos3));
+            if(lightIntensity3 > 0.0f)
+            {
+                color += (diffuseColor3 * lightIntensity3);
+				//color = saturate(color);
+				reflection3 = normalize(2*lightIntensity3*input.normal - lightDir3);
+
+				specular3 = pow(saturate(dot(reflection3,input.viewDir)),specPower3);
+            }
+        }
+    }
+
     textureColor = shaderTexture.Sample(SampleTypeWrap, input.tex);
 
-	//color.rgb = lightIntensity;
-	color = saturate(color);
+
+	//color = saturate(color);
     
     color = color * textureColor;
 	
-	color = saturate(color + specular + specular2);
+	color = saturate(color + specular+ specular2 + specular3);
 
-	//color.rgb = input.normal;
-    
 
     return color;
 }

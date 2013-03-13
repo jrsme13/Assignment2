@@ -21,8 +21,9 @@ public:
 
 	bool Initialize(ID3D10Device*, HWND);
 	void Shutdown();
-	void Render(ID3D10Device*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX,ID3D10ShaderResourceView*
-		,ID3D10ShaderResourceView*,D3DXVECTOR3,D3DXVECTOR4, D3DXVECTOR4, D3DXVECTOR3,D3DXVECTOR4, float,D3DXVECTOR3,
+	void Render(ID3D10Device*, int, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX, D3DXMATRIX,ID3D10ShaderResourceView*,ID3D10ShaderResourceView*,
+		D3DXVECTOR3,D3DXVECTOR4, D3DXVECTOR4, D3DXVECTOR3,D3DXVECTOR4, float,D3DXVECTOR3,
+		D3DXVECTOR4,D3DXVECTOR4,float,D3DXMATRIX, D3DXMATRIX, ID3D10ShaderResourceView*, D3DXVECTOR3,
 		D3DXVECTOR4,D3DXVECTOR4,float,D3DXMATRIX, D3DXMATRIX, ID3D10ShaderResourceView*);
 
 
@@ -37,12 +38,13 @@ private:
 	ID3D10EffectMatrixVariable* _projectionMatrixPtr;
 	ID3D10EffectShaderResourceVariable* _texturePtr;
 
-	ID3D10EffectVectorVariable* _lightDirPtr;
 	ID3D10EffectVectorVariable* _diffusePtr;
-	ID3D10EffectVectorVariable* _lightDirPtr2;
 	ID3D10EffectVectorVariable* _diffusePtr2;
+	ID3D10EffectVectorVariable* _diffusePtr3;
 
 	ID3D10EffectVectorVariable* _lightPosPtr;
+	ID3D10EffectVectorVariable* _lightPositionPtr2;
+	ID3D10EffectVectorVariable* _lightPositionPtr3;
 
 	ID3D10EffectVectorVariable* _ambientPtr;
 	ID3D10EffectVectorVariable* _cameraPositionPtr;
@@ -54,6 +56,9 @@ private:
 	ID3D10EffectVectorVariable* _specularColorPtr2;
 	ID3D10EffectScalarVariable* _specularPowerPtr2;
 
+	ID3D10EffectVectorVariable* _specularColorPtr3;
+	ID3D10EffectScalarVariable* _specularPowerPtr3;
+
 	ID3D10EffectMatrixVariable* _lightViewMatrixPtr;
 	ID3D10EffectMatrixVariable* _lightProjectionMatrixPtr;
 	ID3D10EffectShaderResourceVariable* _depthMapTexturePtr;
@@ -61,7 +66,11 @@ private:
 	ID3D10EffectMatrixVariable* _lightViewMatrixPtr2;
 	ID3D10EffectMatrixVariable* _lightProjectionMatrixPtr2;
 	ID3D10EffectShaderResourceVariable* _depthMapTexturePtr2;
-	ID3D10EffectVectorVariable* _lightPositionPtr2;
+
+	ID3D10EffectMatrixVariable* _lightViewMatrixPtr3;
+	ID3D10EffectMatrixVariable* _lightProjectionMatrixPtr3;
+	ID3D10EffectShaderResourceVariable* _depthMapTexturePtr3;
+	
 
 	bool InitializeShader(ID3D10Device*, HWND, WCHAR*);
 	void ShutdownShader();
@@ -69,6 +78,7 @@ private:
 
 	void SetShaderParameters(D3DXMATRIX, D3DXMATRIX, D3DXMATRIX,D3DXMATRIX, D3DXMATRIX,ID3D10ShaderResourceView*,ID3D10ShaderResourceView*,D3DXVECTOR3,
 		D3DXVECTOR4,D3DXVECTOR4,D3DXVECTOR3,D3DXVECTOR4, float,D3DXVECTOR3,
+		D3DXVECTOR4,D3DXVECTOR4,float,D3DXMATRIX, D3DXMATRIX, ID3D10ShaderResourceView*, D3DXVECTOR3,
 		D3DXVECTOR4,D3DXVECTOR4,float,D3DXMATRIX, D3DXMATRIX, ID3D10ShaderResourceView*);
 	void RenderShader(ID3D10Device*, int);
 };
