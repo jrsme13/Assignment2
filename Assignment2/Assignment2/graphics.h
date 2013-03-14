@@ -14,7 +14,7 @@
 
 //global
 
-const bool FULL_SCREEN = false;
+const bool FULL_SCREEN = true;
 const bool VSYNC_ENABLED = true;
 const float SCREEN_DEPTH = 100.0f;
 const float SCREEN_NEAR = 0.01f;
@@ -51,6 +51,9 @@ private:
 	RenderToTexture* _renderTexture2;
 	RenderToTexture* _renderTexture3;
 	DepthShader* _depthShader;
+	bool _lightAnimation;
+	bool _lightAnimation2;
+	bool _lightAnimation3;
 
 	bool RenderSceneToTexTure();
 	bool RenderSceneToTexTure2();

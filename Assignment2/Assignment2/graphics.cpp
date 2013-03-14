@@ -15,6 +15,9 @@ graphics::graphics()
 	_depthShader = 0;
 	_renderTexture2 = 0;
 	_renderTexture3 = 0;
+	_lightAnimation = true;
+	_lightAnimation2 = true;
+	_lightAnimation3 = true;
 	
 }
 
@@ -152,7 +155,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	_light3->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light3->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light3->SetSpecularPower(32.0f);
-	_light3->SetPosition(4.0f,1.0f,4.0f);
+	_light3->SetPosition(4.0f,2.0f,3.0f);
 	_light3->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 	
 
@@ -296,6 +299,8 @@ bool graphics::Frame()
 
 	static float lightPositionX = -2.0f;
 	static float lightPosZ = 3.0f;
+	static float lightPosZ2 = 3.0f;
+
 	
 	// Render the graphics scene.
 	static float rotation = 0.0f;
@@ -308,21 +313,71 @@ bool graphics::Frame()
 		rotation = -365.0f;
 	}
 
-	lightPosZ -= 0.00005f;
+	
 	if (lightPosZ < 1.0f)
 	{
-		lightPosZ = 3.0f;
+		_lightAnimation2 = true;
+	}
+	else if (lightPosZ > 3.0f)
+	{
+		_lightAnimation2 = false;
+	}
+
+	if (_lightAnimation2 == true)
+	{
+		lightPosZ += 0.0005f;
+	}
+	else if (_lightAnimation2 == false)
+	{
+
+		lightPosZ -= 0.0005f;
 	}
 
 	_light2->SetPosition(0.0f,3.5f,lightPosZ);
 
-	lightPositionX += 0.00005f;
+		
 	if(lightPositionX > -0.5f)
 	{
-		lightPositionX = -2.0f;
+		_lightAnimation = false;
+	}
+	else if(lightPositionX < -2.0f)
+	{
+		_lightAnimation = true;
+	}
+	
+	if (_lightAnimation == true)
+	{
+		lightPositionX += 0.0005f;
+	}
+	else if (_lightAnimation == false)
+	{
+
+		lightPositionX -= 0.0005f;
+	}
+		
+	_light->SetPosition(-2.0f,4.0f,lightPositionX);
+
+	if (lightPosZ2 < 1.0f)
+	{
+		_lightAnimation3 = true;
+	}
+	else if (lightPosZ2 > 3.0f)
+	{
+		_lightAnimation3 = false;
 	}
 
-	_light->SetPosition(-2.0f,4.0f,lightPositionX);
+	if (_lightAnimation3 == true)
+	{
+		lightPosZ2 += 0.0005f;
+	}
+	else if (_lightAnimation3 == false)
+	{
+
+		lightPosZ2 -= 0.0005f;
+	}
+
+	_light3->SetPosition(4.0f,2.0f,lightPosZ2);
+
 
 	// Render the graphics scene.
 	result = Render();
