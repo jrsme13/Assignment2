@@ -96,10 +96,10 @@ PixelInputType ColorVertexShader(VertexInputType input)
     PixelInputType output;
     float4 worldPos;
     
-    // Change the position vector to be 4 units for proper matrix calculations.
+
     input.position.w = 1.0f;
 
-    // Calculate the position of the vertex against the world, view, and projection matrices.
+
     output.position = mul(input.position, worldMatrix);
     output.position = mul(output.position, viewMatrix);
     output.position = mul(output.position, projectionMatrix);
@@ -116,14 +116,14 @@ PixelInputType ColorVertexShader(VertexInputType input)
 	output.lightViewPosition3 = mul(output.lightViewPosition3, lightViewMatrix3);
 	output.lightViewPosition3 = mul(output.lightViewPosition3, lightProjectionMatrix3);
 
-    // Store the input color for the pixel shader to use.
+
     output.tex = input.tex;
     
-	// Calculate the normal vector against the world matrix only.
+
     output.normal = mul(input.normal, (float3x3)worldMatrix);
 	
 	
-    // Normalize the normal vector.
+  
     output.normal = normalize(output.normal);
 
 

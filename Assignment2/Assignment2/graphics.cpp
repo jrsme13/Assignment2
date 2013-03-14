@@ -447,7 +447,7 @@ bool graphics::Render()
 
 	_model2->RenderToGraphics(_D3D->GetDevice());
 
-	//_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+	
 	_shader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix, lightViewMatrix, 
 			       lightProjectionMatrix,_model2->GetTexture(),_renderTexture->GetShaderResourceView(),
 				   _light->GetPosition(), _light->GetDiffuseColor(),_light->GetAmbient(),_camera->GetPosition(),_light->GetSpecularColor(),_light->GetSpecularPower(),_light2->GetPosition(),_light2->GetDiffuseColor()
@@ -465,7 +465,7 @@ bool graphics::Render()
 
 	D3DXMatrixMultiply(&worldMatrix,&worldMatrix,&tempC);
 
-	//_depthShader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix);
+	
 
 	// Render the model using the color shader.
 	_shader->Render(_D3D->GetDevice(), _model->GetIndexCount(), worldMatrix, viewMatrix, projectionMatrix,lightViewMatrix, 

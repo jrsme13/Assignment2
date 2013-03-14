@@ -94,25 +94,20 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 	HRESULT result;
 
 	
-
-
-	// Create the vertex array.
 	vertices = new Vertex[_vertexCount];
 	if(!vertices)
 	{
 		return false;
 	}
 
-	// Create the index array.
+	
 	indices = new unsigned long[_indexCount];
 	if(!indices)
 	{
 		return false;
 	}
 
-
-	// Load the vertex array with data.
-	// Load the vertex array and index array with data.
+	// load in the model infromation into the vertices
 	for(int i=0; i<_vertexCount; i++)
 	{
 		vertices[i].position = D3DXVECTOR3(_modelArray[i].x, _modelArray[i].y, _modelArray[i].z);
@@ -122,41 +117,41 @@ bool Model::InitializeBuffers(ID3D10Device* device)
 		indices[i] = i;
 	}
 
-	// Set up the description of the vertex buffer.
+	
 	vertexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * _vertexCount;
 	vertexBufferDesc.BindFlags = D3D10_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 	vertexBufferDesc.MiscFlags = 0;
 
-	// Give the subresource structure a pointer to the vertex data.
+	
 	vertexData.pSysMem = vertices;
 
-	// Now finally create the vertex buffer.
+	
 	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &_vertexBuffer);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-	// Set up the description of the index buffer.
+	
 	indexBufferDesc.Usage = D3D10_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(unsigned long) * _indexCount;
 	indexBufferDesc.BindFlags = D3D10_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
 
-	// Give the subresource structure a pointer to the index data.
+	
 	indexData.pSysMem = indices;
 
-	// Create the index buffer.
+	
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &_indexBuffer);
 	if(FAILED(result))
 	{
 		return false;
 	}
 
-	// Release the arrays now that the vertex and index buffers have been created and loaded.
+	
 	delete [] vertices;
 	vertices = 0;
 
@@ -310,17 +305,7 @@ bool Model::LoadModel(char* file)
 	// Close the file.
 	ifs.close();
 
-	//delete [] _verteciesArray;
-	//_verteciesArray = 0;
-
-	//delete []  _texturesArray;
-	//_texturesArray = 0;
-
-	//delete [] _normalsArray;
-	//_normalsArray = 0;
-
-	//delete [] _facesArray;
-	//_facesArray = 0;
+	
 
 	for(int i = 0; i < vertexCount; i++)
 	{
@@ -329,28 +314,28 @@ bool Model::LoadModel(char* file)
 	}
 
 
-	//_verteciesArray = new VertexLoader[vertexCount];
+	
 
-		for(int i = 0; i < textureCount; i++)
+	for(int i = 0; i < textureCount; i++)
 	{
 		Textures tex;
 		_textureArray.push_back(tex);
 	}
-	//_texturesArray = new Textures[textureCount];
+	
 	
 	for(int i = 0; i <	normalsCount; i++)
 	{
 		VertexLoader normal;
 		_normalsArray.push_back(normal);
 	}
-	//_normalsArray = new VertexLoader[normalsCount];
+	
 
 	for(int i = 0; i <	faceCount; i++)
 	{
 		Faces f;
 		_facesArray.push_back(f);
 	}
-	//_facesArray = new Faces[faceCount];
+
 
 
 
@@ -506,136 +491,9 @@ bool Model::LoadModel(char* file)
 	}
 
 
-
 	return true;
-	/*ObjectLoader loader;
-	int faces;
-	int faceCount = 0;
-	int modelCount = 0;
 
-	loader.Initialize(file);
-
-	faces = loader.NumberOfFaces();
-
-	_vertexCount = faces*3;
-	_indexCount =  _vertexCount;
-
-	_model = new ModelValues[faces*3];
-	if(!_model)
-	{
-		return false;
-	}
-
-	while( faceCount < faces)
-	{
-		
-			_model[modelCount].x = loader.GetFaceVertexX(faceCount,0);
-			_model[modelCount].y = loader.GetFaceVertexY(faceCount,0);
-			_model[modelCount].z = loader.GetFaceVertexZ(faceCount,0);
-
-			
-			_model[modelCount].tu = loader.GetFaceTextureTu(faceCount,0);
-			_model[modelCount].tv = loader.GetFaceTextureTV(faceCount,0);
-
-			_model[modelCount].nx = loader.GetFaceNormalX(faceCount,0);
-			_model[modelCount].ny = loader.GetFaceNormalY(faceCount,0);
-			_model[modelCount].nz = loader.GetFaceNormalZ(faceCount,0);
-
-			modelCount++;
-
-				_model[modelCount].x = loader.GetFaceVertexX(faceCount,1);
-			_model[modelCount].y = loader.GetFaceVertexY(faceCount,1);
-			_model[modelCount].z = loader.GetFaceVertexZ(faceCount,1);
-
-			
-			_model[modelCount].tu = loader.GetFaceTextureTu(faceCount,1);
-			_model[modelCount].tv = loader.GetFaceTextureTV(faceCount,1);
-
-			_model[modelCount].nx = loader.GetFaceNormalX(faceCount,1);
-			_model[modelCount].ny = loader.GetFaceNormalY(faceCount,1);
-			_model[modelCount].nz = loader.GetFaceNormalZ(faceCount,1);
-
-			modelCount++;
-
-				_model[modelCount].x = loader.GetFaceVertexX(faceCount,2);
-			_model[modelCount].y = loader.GetFaceVertexY(faceCount,2);
-			_model[modelCount].z = loader.GetFaceVertexZ(faceCount,2);
-
-			
-			_model[modelCount].tu = loader.GetFaceTextureTu(faceCount,2);
-			_model[modelCount].tv = loader.GetFaceTextureTV(faceCount,2);
-
-			_model[modelCount].nx = loader.GetFaceNormalX(faceCount,2);
-			_model[modelCount].ny = loader.GetFaceNormalY(faceCount,2);
-			_model[modelCount].nz = loader.GetFaceNormalZ(faceCount,2);
-
-			modelCount++;
-
-		faceCount++;
-	}
-
-	return true;*/
-
-	//ifstream fin;
-	//char input;
-	//int i;
-
-
-	//// Open the model file.
-	//fin.open(file);
-	//
-	//// If it could not open the file then exit.
-	//if(fin.fail())
-	//{
-	//	return false;
-	//}
-
-	//// Read up to the value of vertex count.
-	//fin.get(input);
-	//while(input != ':')
-	//{
-	//	fin.get(input);
-	//}
-
-	//// Read in the vertex count.
-	//fin >> _vertexCount;
-
-	//// Set the number of indices to be the same as the vertex count.
-	//_indexCount = _vertexCount;
-
-	//// Create the model using the vertex count that was read in.
-	//_model = new ModelValues[_vertexCount];
-	//if(!_model)
-	//{
-	//	return false;
-	//}
-
-	//// Read up to the beginning of the data.
-	//fin.get(input);
-	//while(input != ':')
-	//{
-	//	fin.get(input);
-	//}
-	//fin.get(input);
-	//fin.get(input);
-
-	//// Read in the vertex data.
-	//for(i=0; i<_vertexCount; i++)
-	//{
-	//	fin >> _model[i].x >> _model[i].y >> _model[i].z;
-	//	fin >> _model[i].tu >> _model[i].tv;
-	//	fin >> _model[i].nx >> _model[i].ny >> _model[i].nz;
-	//}
-
-	//// Close the model file.
-	//fin.close();
-
-	//return true;
 }
-
-
-
-
 
 
 void Model::ReleaseModel()
