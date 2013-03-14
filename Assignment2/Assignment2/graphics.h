@@ -54,6 +54,7 @@ private:
 	bool _lightAnimation;
 	bool _lightAnimation2;
 	bool _lightAnimation3;
+	float _rotation1;
 
 	bool RenderSceneToTexTure();
 	bool RenderSceneToTexTure2();

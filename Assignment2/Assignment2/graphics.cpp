@@ -18,6 +18,7 @@ graphics::graphics()
 	_lightAnimation = true;
 	_lightAnimation2 = true;
 	_lightAnimation3 = true;
+	_rotation1 = 0.0f;
 	
 }
 
@@ -300,17 +301,13 @@ bool graphics::Frame()
 	static float lightPositionX = -2.0f;
 	static float lightPosZ = 3.0f;
 	static float lightPosZ2 = 3.0f;
-
+	static float rotation;
 	
 	// Render the graphics scene.
-	static float rotation = 0.0f;
-
-
-	// Update the rotation variable each frame.
-	rotation += (float)D3DX_PI * 0.0001f;
-	if(rotation > 360.0f)
+	_rotation1 += (float)D3DX_PI * 0.001f;
+	if(_rotation1 > 360.0f)
 	{
-		rotation = -365.0f;
+		_rotation1 = -365.0f;
 	}
 
 	
@@ -397,8 +394,11 @@ bool graphics::Render()
 	D3DXMATRIX lightViewMatrix, lightProjectionMatrix;
 	D3DXMATRIX lightViewMatrix2, lightProjectionMatrix2;
 	D3DXMATRIX lightViewMatrix3, lightProjectionMatrix3;
-	static float rotation = 90.0f;
 	
+	
+	
+
+
 	result = RenderSceneToTexTure();
 	if(!result)
 	{
@@ -443,6 +443,7 @@ bool graphics::Render()
 
 	//D3DXMatrixRotationX(&worldMatrix, 90.0f);
 	
+	D3DXMatrixRotationY(&worldMatrix,_rotation1);
 
 	_model2->RenderToGraphics(_D3D->GetDevice());
 
@@ -455,6 +456,7 @@ bool graphics::Render()
 	// Put the model vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	_model->RenderToGraphics(_D3D->GetDevice());
 
+	_D3D->GetWorldMatrix(worldMatrix);
 	D3DXMatrixTranslation(&tempA,0.0f,1.0f,1.0f);
 	D3DXMatrixRotationX(&tempB, 90.0f);
 
@@ -496,11 +498,11 @@ bool graphics::RenderSceneToTexTure()
 	// Get the view and orthographic matrices from the light object.
 	_light->GetViewMatrix(lightViewMatrix);
 	_light->GetProjectionMatrix(lightProjectionMatrix);
-
+	D3DXMatrixRotationY(&worldMatrix,_rotation1);
 	_model2->RenderToGraphics(_D3D->GetDevice());
 	_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 
-	
+		_D3D->GetWorldMatrix(worldMatrix);
 
 	D3DXMatrixTranslation(&tempA,0.0f,1.0f,0.5f);
 	D3DXMatrixRotationX(&tempB, 90.0f);
@@ -543,12 +545,12 @@ bool graphics::RenderSceneToTexTure2()
 	// Get the view and orthographic matrices from the light object.
 	_light2->GetViewMatrix(lightViewMatrix);
 	_light2->GetProjectionMatrix(lightProjectionMatrix);
-
+	D3DXMatrixRotationY(&worldMatrix,_rotation1);
 	// Setup the translation matrix for the cube model.
 	_model2->RenderToGraphics(_D3D->GetDevice());
 	_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 
-	
+	_D3D->GetWorldMatrix(worldMatrix);
 
 	D3DXMatrixTranslation(&tempA,0.0f,1.0f,0.5f);
 	D3DXMatrixRotationX(&tempB, 90.0f);
@@ -589,11 +591,11 @@ bool graphics::RenderSceneToTexTure3()
 	// Get the view and orthographic matrices from the light object.
 	_light3->GetViewMatrix(lightViewMatrix);
 	_light3->GetProjectionMatrix(lightProjectionMatrix);
-
+	D3DXMatrixRotationY(&worldMatrix,_rotation1);
 	_model2->RenderToGraphics(_D3D->GetDevice());
 	_depthShader->Render(_D3D->GetDevice(), _model2->GetIndexCount(), worldMatrix, lightViewMatrix, lightProjectionMatrix);
 
-	
+	_D3D->GetWorldMatrix(worldMatrix);
 
 	D3DXMatrixTranslation(&tempA,0.0f,1.0f,0.5f);
 	D3DXMatrixRotationX(&tempB, 90.0f);
