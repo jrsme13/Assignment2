@@ -180,7 +180,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 	
     
 
-
+	// the ambient is the shadow
 	
 	color = ambient;
 
@@ -203,11 +203,11 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
 
 			if (lightIntensity > 0.0f)
 			{
-
+				//this is where the colour is actually set
 				color +=(diffuseColor * lightIntensity);
 				//color = saturate(color);
 				reflection = normalize(2*lightIntensity*input.normal - lightDir);
-
+				// uses the camera position to find the viewing direction to work out the specular.
 				specular = pow(saturate(dot(reflection,input.viewDir)),specPower);
 			}
 		}
@@ -232,7 +232,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
             if(lightIntensity2 > 0.0f)
             {
                 color += (diffuseColor2 * lightIntensity2);
-				color = saturate(color);
+				//color = saturate(color);
 				reflection2 = normalize(2*lightIntensity2*input.normal - lightDir2);
 
 				specular2 = pow(saturate(dot(reflection2,input.viewDir)),specPower2);
@@ -275,7 +275,7 @@ float4 ColorPixelShader(PixelInputType input) : SV_Target
     color = color * textureColor;
 	
 	color = saturate(color + specular+ specular2 + specular3);
-
+	//color.rgb = input.normal.xyz;
 
     return color;
 }

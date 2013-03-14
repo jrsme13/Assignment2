@@ -19,6 +19,7 @@ graphics::graphics()
 	_lightAnimation2 = true;
 	_lightAnimation3 = true;
 	_rotation1 = 0.0f;
+	_cameraAnimation = true;
 	
 }
 
@@ -82,7 +83,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 		return false;
 	}
 
-	result = _model2->Initialize(_D3D->GetDevice(),"../Assignment2/new_teapotOBJ.obj",L"../Assignment2/stone01.dds");
+	result = _model2->Initialize(_D3D->GetDevice(),"../Assignment2/torus_newOBJ.obj",L"../Assignment2/stone01.dds");
 	if(!result)
 	{
 		MessageBox(hwnd, L"Could not initialize the model2 object.", L"Error", MB_OK);
@@ -129,7 +130,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	_light->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light->SetSpecularPower(10.0f);
-	_light->SetPosition(-2.0f,4.0f,2.0f);
+	
 	_light->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 
 
@@ -143,7 +144,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	_light2->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light2->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light2->SetSpecularPower(32.0f);
-	_light2->SetPosition(0.0f,3.5f,3.0f);
+	
 	_light2->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 
 	_light3 = new Lights;
@@ -156,7 +157,7 @@ bool graphics::Intialize(int width, int height,HWND hwnd)
 	_light3->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
 	_light3->SetSpecularColour(0.0f, 0.0f, 0.0f, 1.0f);
 	_light3->SetSpecularPower(32.0f);
-	_light3->SetPosition(4.0f,2.0f,3.0f);
+	
 	_light3->GenerateProjectionMatrix(SCREEN_DEPTH,SCREEN_NEAR);
 	
 
@@ -299,6 +300,7 @@ bool graphics::Frame()
 	bool result;
 
 	static float lightPositionX = -2.0f;
+	static float cameraPositionX = -2.0f;
 	static float lightPosZ = 3.0f;
 	static float lightPosZ2 = 3.0f;
 	static float rotation;
@@ -309,8 +311,8 @@ bool graphics::Frame()
 	{
 		_rotation1 = -365.0f;
 	}
-
 	
+	// this is all of the movement
 	if (lightPosZ < 1.0f)
 	{
 		_lightAnimation2 = true;
@@ -374,6 +376,27 @@ bool graphics::Frame()
 	}
 
 	_light3->SetPosition(4.0f,2.0f,lightPosZ2);
+
+	if (cameraPositionX > 1.0f)
+	{
+		_cameraAnimation = true;
+	}
+	else if (cameraPositionX < -1.0f)
+	{
+		_cameraAnimation = false;
+	}
+
+	if (_cameraAnimation == true)
+	{
+		cameraPositionX -= 0.0005f;
+	}
+	else if (_cameraAnimation == false)
+	{
+
+		cameraPositionX += 0.0005f;
+	}
+
+	_camera->SetPosition(cameraPositionX,10.0f,-12.0f); 
 
 
 	// Render the graphics scene.
